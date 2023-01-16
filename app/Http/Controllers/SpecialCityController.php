@@ -7,11 +7,17 @@ use Illuminate\Http\Request;
 
 class SpecialCityController extends Controller
 {
-    /**
-     * index
-     * load index view
-     * @return void
-     */
+    function __construct()
+    {
+        $this->middleware('permission:SpecialCity-list', ['only' => ['index','searchPlusloadTableData']]);
+        $this->middleware('permission:SpecialCity-create', ['only' => ['storeSpecialCity']]);
+        $this->middleware('permission:SpecialCity-edit', ['only' => ['updateSpecialCity']]);
+        $this->middleware('permission:SpecialCity-delete', ['only' => ['deleteSpecialCity']]);
+
+    }
+
+
+
     public function index()
     {
         $data = SpecialCity::orderByDesc('created_at')->simplePaginate(15);
@@ -76,7 +82,7 @@ class SpecialCityController extends Controller
             // echo json_encode($data);
             return response()->json($data);
         }
-    }    
+    }
     /**
      * storeSpecialCity
      * function store city
@@ -100,7 +106,7 @@ class SpecialCityController extends Controller
             $city->save();
             return response()->json(['status' => 'success', 'message' => 'Special city created successfully.']);
         }
-    }    
+    }
     /**
      * updateSpecialCity
      * function update city -> "enable/disable" feature
@@ -119,7 +125,7 @@ class SpecialCityController extends Controller
                 return response()->json(['status' => 'error', 'message' => 'An error occured please try again.']);
             }
         }
-    }    
+    }
     /**
      * deleteSpecialCity
      * function permanently delete city

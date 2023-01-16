@@ -18,6 +18,17 @@ use Log;
 
 class PackageController extends Controller
 {
+
+    function __construct()
+    {
+        $this->middleware('permission:package-list', ['only' => ['index']]);
+        $this->middleware('permission:package-packageDetails', ['only' => ['packageDetails']]);
+        $this->middleware('permission:package-getDrivers', ['only' => ['getDrivers']]);
+        $this->middleware('permission:package-assignDriver', ['only' => ['assignDriver']]);
+
+    }
+
+
     public function index(Request $request)
     {
         $data = Order::with('package')->orderByDesc('created_at')->simplePaginate(15);

@@ -48,6 +48,7 @@
                                         <th> Fullname </th>
                                         <th> Email </th>
                                         <th> Phone </th>
+                                        <th> Roles </th>
                                         <th> Action</th>
                                     </tr>
                                 </thead>
@@ -61,8 +62,15 @@
                                         <td>{{ $value->email }}</td>
                                         <td>{{ $value->phone }}</td>
                                         <td>
+                                            @if(!empty($value->getRoleNames()))
+                                                @foreach($value->getRoleNames() as $v)
+                                                    <label class="badge badge-success">{{ $v }}</label>
+                                                @endforeach
+                                            @endif
+                                        </td>
+                                        <td>
                                             <a href="view/{{$value->id}}" class="btn btn-warning" style="padding: 5px !important;"><i class="ft-eye"></i> View</a>
-
+                                            <a href="view/{{$value->id}}" class="btn btn-success" style="padding: 5px !important;"><i class="ft-eye"></i> Edit</a>
                                             @if ($value->status == 1)
                                             <a href="{{route('user.status', ['id' => $value->id])}}" class="btn btn-danger" style="padding: 5px !important;"> <i class="ft-x-circle"></i> Disable</a>
                                             @else

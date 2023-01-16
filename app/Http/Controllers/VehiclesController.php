@@ -10,6 +10,14 @@ use App\Vehicle;
 
 class VehiclesController extends Controller
 {
+
+    function __construct()
+    {
+        $this->middleware('permission:Vehicles-list', ['only' => ['index']]);
+
+    }
+
+
     public function index(Request $request)
     {
         return view('Vehicles.index');

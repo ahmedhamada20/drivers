@@ -9,6 +9,14 @@ use App\Services\OneSignalService;
 
 class NotificationController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:Notifications-list', ['only' => ['index']]);
+        $this->middleware('permission:Notifications-sendToUserApp', ['only' => ['sendToUserApp']]);
+
+
+    }
+
     public function index()
     {
         return view('Notifications.create');
@@ -23,7 +31,7 @@ class NotificationController extends Controller
         }else{
             return back()->with('error', 'An error occured. Please try again');
         }
-        
+
         // $contents = $request->send_message;
         // OneSignal::sendNotificationToAll(
         //     $contents,
@@ -54,6 +62,6 @@ class NotificationController extends Controller
         //     $buttons = null,
         //     $schedule = null
         // );
-        
+
     }
 }

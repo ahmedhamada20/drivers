@@ -107,8 +107,8 @@
           </li> -->
         </ul>
       </li>
-      
-      
+
+
       <!-- list 9 -->
 	  <li class=" nav-item"><a href="#"><i class="ft-life-buoy"></i><span class="menu-title" data-i18n="">Promo Code</span></a>
         <ul class="menu-content">
@@ -117,8 +117,8 @@
           </li>
         </ul>
       </li>
-      
-          
+
+
       <!-- list 4 -->
       <li class=" nav-item"><a href="#"><i class="ft-users"></i><span class="menu-title" data-i18n="">company Offres</span></a>
         <ul class="menu-content">
@@ -128,8 +128,38 @@
         </ul>
       </li>
 
-      
-      
+
+        <li class=" nav-item"><a href="#"><i class="ft-users"></i><span class="menu-title" data-i18n="">Admins</span></a>
+            <ul class="menu-content">
+                <li @if( Request::is('admin/admins/index')  || (Request::is('admin/admins/view/*'))) class="active" @endif>
+                    <a class="menu-item" href="{{route('admins.index')}}"><i class="ft-chevrons-right"></i>Admins </a>
+
+                </li> <li @if( Request::is('admin/users/create') || (Request::is('admin/users/create')) || (Request::is('admin/users/view/*'))) class="active" @endif>
+
+                    <a class="menu-item" href="{{route('users.create')}}"><i class="ft-chevrons-right"></i>Add Admins </a>
+                </li>
+                <!-- <li>
+            <a class="menu-item" href="{{route('users.index')}}">Users List</a>
+          </li> -->
+            </ul>
+        </li>
+        <li class=" nav-item"><a href="#"><i class="ft-users"></i><span class="menu-title" data-i18n="">Roles</span></a>
+            <ul class="menu-content">
+                <li @if( Request::is('admin/roles/index')  || (Request::is('admin/roles/view/*'))) class="active" @endif>
+                    <a class="menu-item" href="{{route('roles.index')}}"><i class="ft-chevrons-right"></i>Roles </a>
+
+                </li> <li @if( Request::is('admin/roles/create') || (Request::is('admin/roles/create')) || (Request::is('admin/roles/view/*'))) class="active" @endif>
+
+                    <a class="menu-item" href="{{route('roles.create')}}"><i class="ft-chevrons-right"></i>Add Roles </a>
+                </li>
+                <!-- <li>
+            <a class="menu-item" href="{{route('users.index')}}">Users List</a>
+          </li> -->
+            </ul>
+        </li>
+
+
+
     </ul>
   </div>
 </div>

@@ -2,21 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use DataTables;
-use App\User;
-use App\Package;
-use App\Order;
-use App\OrderStatus;
 use App\Address;
+use App\Order;
+use App\Package;
+use App\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
-class UserController extends Controller
+class AdminController extends Controller
 {
-
-
     function __construct()
     {
         $this->middleware('permission:user-list|user-create|user-edit|user-delete', ['only' => ['index','show']]);
@@ -30,9 +26,9 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        $data = User::where('type', 0)->where('status', 1)->orderByDesc('created_at')->simplePaginate(15);
+        $data = User::where('type', 1)->where('status', 1)->orderByDesc('created_at')->simplePaginate(15);
 
-        return view('Users.list_users', compact('data'));
+        return view('admin.list_users', compact('data'));
     }
 
     public function create(Request $request)
@@ -49,14 +45,14 @@ class UserController extends Controller
             $output = '';
             $query = $request->get('query');
             if ($query != '') {
-                $data = User::orWhere('type', 0)->where('status', 1)
+                $data = User::orWhere('type', 1)->where('status', 1)
                     ->where('firstname', 'LIKE', "%{$query}%")
                     ->orWhere('lastname', 'LIKE', "%{$query}%")
                     ->orWhere('email', 'LIKE', "%{$query}%")
                     ->limit(15)
                     ->get();
             } else {
-                $data = User::where('type', 0)->where('status', 1)
+                $data = User::where('type', 1)->where('status', 1)
                     ->orderByDesc('created_at')
                     ->limit(15)->get();
             }
@@ -218,5 +214,14 @@ class UserController extends Controller
             return back()->with('error', 'Error No Edit User');
         }
 
+    }
+
+    public function edit($id)
+    {
+        $user = User::find($id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name','name')->all();
+
+        return view('admin.edit',compact('user','roles','userRole'));
     }
 }

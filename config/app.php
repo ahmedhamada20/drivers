@@ -178,6 +178,7 @@ return [
         Yajra\DataTables\DataTablesServiceProvider::class,
         Berkayk\OneSignal\OneSignalServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
+        Spatie\Permission\PermissionServiceProvider::class,
 
     ],
 

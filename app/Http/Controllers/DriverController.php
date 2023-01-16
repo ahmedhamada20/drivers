@@ -16,13 +16,19 @@ use App\Company;
 
 class DriverController extends Controller
 {
-    /**
-     * driver driver profile view.
-     *
-     * @param mixed $request
-     * @author Nived
-     * @return bool
-     */
+
+
+    function __construct()
+    {
+        $this->middleware('permission:Drivers-list', ['only' => ['index']]);
+        $this->middleware('permission:Drivers-create', ['only' => ['create','store']]);
+        $this->middleware('permission:Drivers-edit', ['only' => ['edit','updateProfile']]);
+        $this->middleware('permission:Drivers-delete', ['only' => ['distroy','destroy']]);
+        $this->middleware('permission:Drivers-statusUpdate', ['only' => ['statusUpdate']]);
+        $this->middleware('permission:Drivers-upload', ['only' => ['upload']]);
+
+    }
+
     public function viewDrivers(Request $request)
     {
         return view('Drivers.drivers_card');
@@ -536,7 +542,7 @@ class DriverController extends Controller
             if ($query != '') {
                 $data = Driver::Where('fullname', 'LIKE', '%' . $query . '%')
                     ->where('status', 1)
-                    // ->orWhere('email', 'LIKE', '%' . $query . '%')   
+                    // ->orWhere('email', 'LIKE', '%' . $query . '%')
                     ->get();
             } else {
                 $data = Driver::orderBy('fullname', 'asc')

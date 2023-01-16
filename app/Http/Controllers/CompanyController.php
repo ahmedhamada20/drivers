@@ -8,6 +8,15 @@ use App\Rate;
 
 class CompanyController extends Controller
 {
+
+    function __construct()
+    {
+        $this->middleware('permission:Company-list', ['only' => ['index']]);
+        $this->middleware('permission:Company-create', ['only' => ['create','store']]);
+        $this->middleware('permission:Company-statusUpdate', ['only' => ['statusUpdate']]);
+    }
+
+
     public function index()
     {
         $data = Company::orderByDesc('created_at')->simplePaginate(15);
@@ -243,9 +252,9 @@ class CompanyController extends Controller
                 // $rate->update(['discount' => $request->discount]);
                 $rate->discount = $request->discount;
                 $rate->save();
-            } 
+            }
             return redirect()->back()->with('success-discount', 'Discount saved successfully.');
-        } 
+        }
         // else {
         //     $rate = new Rate;
         //     $rate->company_id = $request->company_id;
