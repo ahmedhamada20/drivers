@@ -158,6 +158,47 @@
             </ul>
         </li>
 
+        <li class=" nav-item"><a href="#"><i class="ft-users"></i><span class="menu-title" data-i18n="">Map driver </span></a>
+{{--            <ul class="menu-content">--}}
+{{--                <li @if( Request::is('admin/roles/index')  || (Request::is('admin/roles/view/*'))) class="active" @endif>--}}
+{{--                    <a class="menu-item" href="{{route('roles.index')}}"><i class="ft-chevrons-right"></i>Roles </a>--}}
+
+{{--                </li> <li @if( Request::is('admin/roles/create') || (Request::is('admin/roles/create')) || (Request::is('admin/roles/view/*'))) class="active" @endif>--}}
+
+{{--                    <a class="menu-item" href="{{route('roles.create')}}"><i class="ft-chevrons-right"></i>Add Roles </a>--}}
+{{--                </li>--}}
+{{--            --}}
+{{--            </ul>--}}
+        </li>
+
+
+        <li class=" nav-item"><a href="#"><i class="ft-users"></i><span class="menu-title" data-i18n="">Settings</span></a>
+{{--            <ul class="menu-content">--}}
+{{--                <li @if( Request::is('admin/roles/index')  || (Request::is('admin/roles/view/*'))) class="active" @endif>--}}
+{{--                    <a class="menu-item" href="{{route('roles.index')}}"><i class="ft-chevrons-right"></i>Roles </a>--}}
+
+{{--                </li> <li @if( Request::is('admin/roles/create') || (Request::is('admin/roles/create')) || (Request::is('admin/roles/view/*'))) class="active" @endif>--}}
+
+{{--                    <a class="menu-item" href="{{route('roles.create')}}"><i class="ft-chevrons-right"></i>Add Roles </a>--}}
+{{--                </li>--}}
+{{--            --}}
+{{--            </ul>--}}
+        </li>
+                <li class=" nav-item"><a href="#"><i class="ft-users"></i><span class="menu-title" data-i18n="">currency</span></a>
+{{--            <ul class="menu-content">--}}
+{{--                <li @if( Request::is('admin/roles/index')  || (Request::is('admin/roles/view/*'))) class="active" @endif>--}}
+{{--                    <a class="menu-item" href="{{route('roles.index')}}"><i class="ft-chevrons-right"></i>Roles </a>--}}
+
+{{--                </li> <li @if( Request::is('admin/roles/create') || (Request::is('admin/roles/create')) || (Request::is('admin/roles/view/*'))) class="active" @endif>--}}
+
+{{--                    <a class="menu-item" href="{{route('roles.create')}}"><i class="ft-chevrons-right"></i>Add Roles </a>--}}
+{{--                </li>--}}
+{{--            --}}
+{{--            </ul>--}}
+        </li>
+
+
+
 
 
     </ul>
