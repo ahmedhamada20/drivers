@@ -58,11 +58,21 @@ class PermissionTableSeeder extends Seeder
             'Company-create',
             'Company-statusUpdate',
 
-
+            // Roles
             'role-list',
             'role-create',
             'role-edit',
             'role-delete',
+
+            // Reports
+            'Drivers-report',
+            'Orders-report',
+
+            // Setting Permission
+            'Map-driver',
+            'Settings',
+            'currency',
+
 
         ];
 

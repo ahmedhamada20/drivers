@@ -72,7 +72,7 @@
                                                 </td>
                                                 <td>
 {{--                                                    <a href="view/{{$value->id}}" class="btn btn-warning" style="padding: 5px !important;"><i class="ft-eye"></i> View</a>--}}
-                                                    <a href="" class="btn btn-success" style="padding: 5px !important;"><i class="ft-eye"></i> Edit</a>
+                                                    <a href="{{route('admins.edit',$value->id)}}" class="btn btn-success" style="padding: 5px !important;"><i class="ft-edit"></i> Edit</a>
 {{--                                                    @if ($value->status == 1)--}}
 {{--                                                        <a href="{{route('user.status', ['id' => $value->id])}}" class="btn btn-danger" style="padding: 5px !important;"> <i class="ft-x-circle"></i> Disable</a>--}}
 {{--                                                    @else--}}

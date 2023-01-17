@@ -172,8 +172,8 @@ class UserController extends Controller
                 'password' => Hash::make($request->password),
                 'phone' => $request->phone,
                 'type' => 1,
-                'status' => 0,
-                'is_admin' => 0,
+                'status' => 1,
+                'is_admin' => 1,
             ]);
 
             $users->assignRole($request->input('roles'));
@@ -205,8 +205,8 @@ class UserController extends Controller
                 'email' => $request->email ?? $users->email,
                 'phone' => $request->phone ?? $users->phone,
                 'type' => 1,
-                'status' => 0,
-                'is_admin' => 0,
+                'status' => 1,
+                'is_admin' => 1,
             ]);
 
             DB::table('model_has_roles')->where('model_id',$id)->delete();

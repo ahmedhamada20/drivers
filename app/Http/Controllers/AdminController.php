@@ -168,8 +168,8 @@ class AdminController extends Controller
                 'password' => Hash::make($request->password),
                 'phone' => $request->phone,
                 'type' => 1,
-                'status' => 0,
-                'is_admin' => 0,
+                'status' => 1,
+                'is_admin' => 1,
             ]);
 
             $users->assignRole($request->input('roles'));
@@ -181,47 +181,48 @@ class AdminController extends Controller
 
     }
 
-    public function update(Request $request ,$id)
+    public function update(Request $request)
     {
-        try {
+
+//        try {
 
             $this->validate($request, [
                 'firstname' => 'required|string',
                 'lastname' => 'required|string',
-                'email' => 'required|email|unique:users,email',
-                'password' => 'required|string',
+//                'email' => 'required|email|unique:users,email',
+//                'password' => 'required|string',
                 'phone' => 'required',
                 'roles' => 'required'
             ]);
 
-            $users = User::findorfail($id);
+            $users = User::findorfail($request->id);
             $users->update([
                 'firstname' => $request->firstname ?? $users->firstname,
                 'lastname' => $request->lastname ?? $users->lastname,
                 'email' => $request->email ?? $users->email,
                 'phone' => $request->phone ?? $users->phone,
+                'password' => Hash::make($request->password) ?? $users->password,
                 'type' => 1,
-                'status' => 0,
-                'is_admin' => 0,
+                'status' => 1,
+                'is_admin' => 1,
             ]);
 
-            DB::table('model_has_roles')->where('model_id',$id)->delete();
+            DB::table('model_has_roles')->where('model_id',$request->id)->delete();
 
             $users->assignRole($request->input('roles'));
 
-            return back()->with('message', 'Edit User Successfully');
-        }catch (\Exception $exception){
-            return back()->with('error', 'Error No Edit User');
-        }
+            return back()->with('success','Updated Users successfully');
+//        }catch (\Exception $exception){
+//            return back()->with('error', 'Error No Edit User');
+//        }
 
     }
 
     public function edit($id)
     {
-        $user = User::find($id);
+        $user = User::findorfail($id);
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name','name')->all();
-
         return view('admin.edit',compact('user','roles','userRole'));
     }
 }

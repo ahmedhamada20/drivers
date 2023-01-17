@@ -38,6 +38,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Admins
     Route::get('/admins/index', 'AdminController@index')->name('admins.index');
     Route::get('live-search/admins', 'AdminController@searchBox')->name('live_search_admins.action');
+    Route::get('admins/edit/{id}','AdminController@edit')->name('admins.edit');
+    Route::post('admins/update','AdminController@update')->name('admins.update');
     // profile
     Route::get('/profile', 'ProfileController@index')->name('profile.view');
     // Users Route::get('/users', 'UserController@index')->name('users.index');

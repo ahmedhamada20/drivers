@@ -2,7 +2,9 @@
 
 use App\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -15,14 +17,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \Illuminate\Support\Facades\DB::table('permissions')->delete();
-        \Illuminate\Support\Facades\DB::table('roles')->delete();
+        Schema::disableForeignKeyConstraints();
+        DB::table('permissions')->delete();
+        DB::table('roles')->delete();
 
-        \Illuminate\Support\Facades\DB::table('role_has_permissions')->truncate();
+        DB::table('role_has_permissions')->truncate();
 
          $this->call(PermissionTableSeeder::class);
 
-         \App\User::where('is_admin',1)->delete();
+//         DB::table('users')->where('is_admin',1)->delete();
 
 
         $user = User::create([
@@ -42,5 +45,7 @@ class DatabaseSeeder extends Seeder
         $role->syncPermissions($permissions);
 
         $user->assignRole([$role->id]);
+
+        Schema::enableForeignKeyConstraints();
     }
 }
