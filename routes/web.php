@@ -35,6 +35,13 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Route::get('/dashboard', 'HomeController@dashboard')->name('admin.home')->middleware('is_admin');
 
 
+    // Reports
+     Route::get('get/drivers/report', 'ReportController@getdrivers')->name('get-drivers-report');
+     Route::get('search_drivers', 'ReportController@search_drivers')->name('search_drivers');
+
+     Route::get('get/orders/report', 'ReportController@getorders')->name('get-orders-report');
+     Route::get('search_Orders', 'ReportController@search_Orders')->name('search_Orders');
+
     // Admins
     Route::get('/admins/index', 'AdminController@index')->name('admins.index');
     Route::get('live-search/admins', 'AdminController@searchBox')->name('live_search_admins.action');

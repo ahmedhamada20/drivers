@@ -12,7 +12,7 @@ class Driver extends Authenticatable
     use HasApiTokens, Notifiable;
 
     protected $fillable = [
-        'fullname', 'email', 'phone', 'gender', 'dob', 'password', 'status', 'licence_file', 'emorates_id', 'distance', 'address', 'profile','company_id'
+        'fullname', 'email', 'phone', 'gender', 'dob', 'password', 'status', 'licence_file', 'emorates_id', 'distance', 'address', 'profile', 'company_id'
     ];
     /**
      * The attributes that should be hidden for arrays.
@@ -47,5 +47,19 @@ class Driver extends Authenticatable
     public function vehicle()
     {
         return $this->belongsTo('App\Vehicle', 'driver_id', 'id');
+    }
+
+    public function getOrdersStatus()
+    {
+        return $this->hasMany('App\Orderstatus', 'driver_id');
+    }
+
+    public function getSumTotal()
+    {
+        $count = 0;
+        foreach ($this->getOrdersStatus as $row){
+            $count += $row->order()->where('status','Delivered')->sum('total_amount');
+        }
+        return $count;
     }
 }

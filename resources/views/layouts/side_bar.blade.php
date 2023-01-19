@@ -211,6 +211,27 @@
                 </li>
             @endcan
 
+
+            <li class=" nav-item"><a href="#"><i class="ft-users"></i><span class="menu-title" data-i18n="">Reports</span></a>
+                <ul class="menu-content">
+                    @can('Drivers-report')
+                        <li>
+                            <a class="menu-item" href="{{route('get-drivers-report')}}"><i class="ft-chevrons-right"></i>Reports drivers </a>
+
+                        </li>
+                    @endcan
+
+                    @can('Orders-report')
+                        <li>
+                            <a class="menu-item" href="{{route('get-orders-report')}}"><i class="ft-chevrons-right"></i>Reports Orders </a>
+
+                        </li>
+                    @endcan
+
+
+                </ul>
+            </li>
+
             @can('Map-driver')
                 <li class=" nav-item"><a href="#"><i class="ft-users"></i><span class="menu-title"
                                                                                 data-i18n="">Map driver </span></a>
@@ -266,26 +287,7 @@
             @endcan
 
 
-            <li class=" nav-item"><a href="#"><i class="ft-users"></i><span class="menu-title"
-                                                                            data-i18n="">Reports</span></a>
-                <ul class="menu-content">
-                    @can('Drivers-report')
-                        <li>
-                            <a class="menu-item" href=""><i class="ft-chevrons-right"></i>Reports drivers </a>
 
-                        </li>
-                    @endcan
-
-                    @can('Orders-report')
-                        <li>
-                            <a class="menu-item" href=""><i class="ft-chevrons-right"></i>Reports Orders </a>
-
-                        </li>
-                    @endcan
-
-
-                </ul>
-            </li>
 
 
         </ul>

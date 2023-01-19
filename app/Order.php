@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $fillable = [
-        'user_id', 'package_id', 'merchant_id', 'payment_type', 'total_amount', 'order_id', 'status','cancel_reason'
+        'user_id', 'package_id', 'merchant_id', 'payment_type', 'total_amount', 'order_id', 'status','cancel_reason','order_id'
     ];
 
     /**
@@ -29,6 +29,16 @@ class Order extends Model
     public function orderstatus()
     {
         return $this->belongsTo('App\Orderstatus', 'order_id', 'id');
+    }
+
+    public function getInformation()
+    {
+        return $this->hasMany('App\Orderstatus', 'order_id', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User', 'user_id');
     }
 
 

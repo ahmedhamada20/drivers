@@ -25,4 +25,9 @@ class Orderstatus extends Model
     {
         return $this->belongsTo('App\Driver', 'driver_id', 'id');
     }
+
+    public function drivers()
+    {
+        return $this->belongsTo('App\Driver', 'driver_id');
+    }
 }
