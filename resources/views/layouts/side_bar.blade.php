@@ -116,6 +116,9 @@
 
 
 
+
+
+
                     @endif>
             <a class="menu-item" href="{{route('banner.index')}}">List</a>
           </li> -->
@@ -131,6 +134,9 @@
                         </li>
                         <!-- <li @if( Request::is('admin/banner/index') )
                             class="active"
+
+
+
 
 
 
@@ -212,18 +218,21 @@
             @endcan
 
 
-            <li class=" nav-item"><a href="#"><i class="ft-users"></i><span class="menu-title" data-i18n="">Reports</span></a>
+            <li class=" nav-item"><a href="#"><i class="ft-users"></i><span class="menu-title"
+                                                                            data-i18n="">Reports</span></a>
                 <ul class="menu-content">
                     @can('Drivers-report')
                         <li>
-                            <a class="menu-item" href="{{route('get-drivers-report')}}"><i class="ft-chevrons-right"></i>Reports drivers </a>
+                            <a class="menu-item" href="{{route('get-drivers-report')}}"><i
+                                    class="ft-chevrons-right"></i>Reports drivers </a>
 
                         </li>
                     @endcan
 
                     @can('Orders-report')
                         <li>
-                            <a class="menu-item" href="{{route('get-orders-report')}}"><i class="ft-chevrons-right"></i>Reports Orders </a>
+                            <a class="menu-item" href="{{route('get-orders-report')}}"><i class="ft-chevrons-right"></i>Reports
+                                Orders </a>
 
                         </li>
                     @endcan
@@ -235,16 +244,13 @@
             @can('Map-driver')
                 <li class=" nav-item"><a href="#"><i class="ft-users"></i><span class="menu-title"
                                                                                 data-i18n="">Map driver </span></a>
-                    {{--            <ul class="menu-content">--}}
-                    {{--                <li @if( Request::is('admin/roles/index')  || (Request::is('admin/roles/view/*'))) class="active" @endif>--}}
-                    {{--                    <a class="menu-item" href="{{route('roles.index')}}"><i class="ft-chevrons-right"></i>Roles </a>--}}
+                    <ul class="menu-content">
+                        <li >
+                            <a class="menu-item" href="{{route('getLocations')}}"><i class="ft-chevrons-right"></i>Map driver
+                            </a>
 
-                    {{--                </li> <li @if( Request::is('admin/roles/create') || (Request::is('admin/roles/create')) || (Request::is('admin/roles/view/*'))) class="active" @endif>--}}
 
-                    {{--                    <a class="menu-item" href="{{route('roles.create')}}"><i class="ft-chevrons-right"></i>Add Roles </a>--}}
-                    {{--                </li>--}}
-                    {{--            --}}
-                    {{--            </ul>--}}
+                    </ul>
                 </li>
             @endcan
 
@@ -285,9 +291,6 @@
                 </li>
 
             @endcan
-
-
-
 
 
         </ul>

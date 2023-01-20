@@ -93,9 +93,7 @@
                                                 @foreach($orders->getInformation as $drivers)
                                                     <td>{{$drivers->driver ? $drivers->driver->fullname : null}}</td>
                                                     <td>{{$drivers->driver ? $drivers->driver->phone : null}}</td>
-
                                                 @endforeach
-
                                                 <td>{{ $orders->created_at->diffForHumans(['parts'=>1,'join'=>', '])}}</td>
                                             </tr>
                                         @endforeach

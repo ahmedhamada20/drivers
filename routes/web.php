@@ -35,6 +35,10 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Route::get('/dashboard', 'HomeController@dashboard')->name('admin.home')->middleware('is_admin');
 
 
+    // get Location In Map
+    Route::get('getLocations','ReportController@getLocations')->name('getLocations');
+            Route::get('getAllLocationsDriver','ReportController@getAllLocationsDriver')->name('getAllLocationsDriver');
+
     // Reports
      Route::get('get/drivers/report', 'ReportController@getdrivers')->name('get-drivers-report');
      Route::get('search_drivers', 'ReportController@search_drivers')->name('search_drivers');
