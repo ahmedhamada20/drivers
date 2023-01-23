@@ -30,6 +30,7 @@ Route::group(['middleware' => ['cors']], function () {
     Route::post('/login', 'API\AuthController@login')->name('login.api');
     Route::post('/device-register', 'API\AuthController@deviceRegister')->name('device.register');
     Route::post('/driver-login', 'API\DriverController@login')->name('driver.register');
+    Route::post('/driver-register', 'API\DriverController@register')->name('driver-register');
 });
 
 Route::middleware('auth:api')->group(function () {

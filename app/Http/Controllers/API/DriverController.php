@@ -19,17 +19,94 @@ use App\Address;
 use App\User;
 use App\OffersDivere;
 use App\Services\GeoMapper;
+use Illuminate\Support\Str;
 use Log;
 use Image;
 
 class DriverController extends Controller
 {
-    /**
-     * driver list for user app -- api -Drivers-
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
+    public function register(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'firstname' => 'bail|required|string|max:255',
+                'lastname' => 'required|string|max:255',
+                'email' => 'bail|required|string|email|max:255',
+                'phone' => 'required|min:10',
+            ],
+                [
+                    'firstname.required' => 'أدخل الإسم الأول',
+                    'lastname.required' => 'أدخل الإسم الأخير',
+                    'email.required' => 'أدخل البريد الإلكتروني',
+                    'email.email' => 'أدخل بريد إلكتروني صحيح',
+                    'phone.min' => 'رقم الهاتف غير صحيح'
+                ]);
+
+
+            if ($validator->fails()) {
+                // return $this->error($validator->errors()->first(), 200);
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $validator->errors()->first()
+                ], 200);
+            }
+            DB::transaction(function () use ($request, &$data) {
+                $request['remember_token'] = Str::random(10);
+
+                $request['language'] = $request['language'] ? $request['language']  : 'en';
+
+                $phone = Driver::where('phone', $request->phone)->first();
+                $email = Driver::where('email', $request->email)->first();
+                if( $phone ){
+                    $phone->firstname = $request->firstname ? $request->firstname : $phone->firstname;
+                    $phone->lastname = $request->lastname ? $request->lastname : $phone->lastname;
+                    $phone->email = $request->email ? $request->email : $phone->email;
+                    $phone->phone = $request->phone ? $request->phone : $phone->phone;
+                    $phone->address = $request->address ? $request->address : $phone->address;
+                    $phone->language = "en";
+                    if( $phone->save() ){
+                        $user = Driver::where('id', $phone->id)->first();
+                    }
+                }else if( $email ) {
+                    $email->firstname = $request->firstname ? $request->firstname : $email->firstname;
+                    $email->lastname = $request->lastname ? $request->lastname : $email->lastname;
+                    $email->email = $request->email ? $request->email : $email->email;
+                    $email->phone = $request->phone ? $request->phone : $email->phone;
+                    $email->language = "en";
+
+                    if( $email->save() ){
+                        $user = Driver::where('id', $email->id)->first();
+                    }
+                } else {
+
+                    $user = Driver::create($request->toArray());
+                }
+
+
+                $data = array(
+                    'id' => $user->id ?  $user->id : '',
+                    'firstname' => $user->firstname ?  $user->firstname : '',
+                    'lastname' => $user->lastname ?  $user->lastname : '',
+                    'email' => $user->email ?  $user->email : '',
+                    'phone' => $user->phone ?  (string)$user->phone : '',
+                    'language' => $user->language ?  $user->language : '',
+                );
+            });
+
+            // return $this->success('Registered Successfully', $data);
+            return $this->success('تسجيل الدخول بنجاح', $data);
+
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Somethingwent wrong, please try again later!!'
+            ], 200);
+        }
+    }
+
+
     public function index(Request $request)
     {
         try {
@@ -73,6 +150,7 @@ class DriverController extends Controller
             ], 200);
         }
     }
+
     /**
      * driver login
      *
@@ -87,9 +165,9 @@ class DriverController extends Controller
         if ($validator->fails()) {
             return $this->error($validator->errors()->first(), 200);
         }
-        
+
         $driver = Driver::where('phone', $request->phone)->where('status', 1)->first();
-        
+
         if ($driver) {
             $firstname = '';
             $lastname = '';
@@ -97,20 +175,20 @@ class DriverController extends Controller
             if ($driver->fullname) {
                 $fullname = explode(' ', $driver->fullname);
                 $firstname = $fullname[0];
-                $lastname =  $fullname[1];
+                $lastname = $fullname[1];
             }
 
             $vehicle = Vehicle::where('driver_id', $driver->id)->first();
             if ($request->phone == $driver->phone) {
                 $token = $driver->createToken('Laravel Password Grant Client')->accessToken;
                 $response = [
-                    'id' => $driver->id ?  $driver->id : '',
-                    'firstname' => $driver->fullname ?  $firstname : '',
-                    'lastname' => $driver->fullname ?  $lastname : '',
-                    'email' => $driver->email ?  $driver->email : '',
-                    'phone' => $driver->phone ?  (string)$driver->phone : '',
+                    'id' => $driver->id ? $driver->id : '',
+                    'firstname' => $driver->fullname ? $firstname : '',
+                    'lastname' => $driver->fullname ? $lastname : '',
+                    'email' => $driver->email ? $driver->email : '',
+                    'phone' => $driver->phone ? (string)$driver->phone : '',
                     // 'emirates_id' => $driver->emirates_id ?  $driver->emirates_id : '',
-                    'status' => $driver->status ?  true : false,
+                    'status' => $driver->status ? true : false,
                     'vehicle_type' => $vehicle->type ? $vehicle->type : "",
                     'vehicle_number' => $vehicle->vehicle_number ? $vehicle->vehicle_number : "",
                     'driver_unique_id' => $driver->unique_id ? $driver->unique_id : "",
@@ -143,11 +221,10 @@ class DriverController extends Controller
     }
 
 
-
     /**
      * Driver activity checkin check out
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function activity(Request $request)
@@ -290,8 +367,8 @@ class DriverController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function locationUpdate(Request $request)
@@ -350,30 +427,30 @@ class DriverController extends Controller
                     // if ($ordersList->company_id == $driver->company_id) {
                     Log::info('senderAddress ' . $ordersList->package->sender_address_id);
                     Log::info('recieverAddress ' . $ordersList->package->delivery_address_id);
-                    $senderAddress  = Address::where('id', $ordersList->package->sender_address_id)->first();
-                    $recieverAddress  = Address::where('id', $ordersList->package->delivery_address_id)->first();
+                    $senderAddress = Address::where('id', $ordersList->package->sender_address_id)->first();
+                    $recieverAddress = Address::where('id', $ordersList->package->delivery_address_id)->first();
                     // dd($row->order->id);
                     $response[] = array(
-                        'id' => $ordersList->id ?  $ordersList->id : '',
-                        'order_id' => $ordersList->order_id ?  $ordersList->order_id : '',
-                        'chat_id' => $ordersList->chat_id ?  $ordersList->chat_id : '',
+                        'id' => $ordersList->id ? $ordersList->id : '',
+                        'order_id' => $ordersList->order_id ? $ordersList->order_id : '',
+                        'chat_id' => $ordersList->chat_id ? $ordersList->chat_id : '',
                         // 'user_id' => $ordersList->user_id ?  $ordersList->user_id : '',
                         // 'weight' => $ordersList->package->weight ?  $ordersList->package->weight : '',
                         // 'fragile' => $ordersList->package->is_fragile ?  $ordersList->package->is_fragile : 0,
                         // 'air_cool' => $ordersList->package->need_aircool ?  $ordersList->package->need_aircool : 0,
                         // 'vehicle_type' => $ordersList->package->vehicle_type ?  $ordersList->package->vehicle_type : '',
                         // 'address_type' => $address ?  $address->address_type : '',
-                        'order_type' => $ordersList->package->order_type ?  $ordersList->package->order_type : '',
-                        'date' => $ordersList->package->order_date ?  $ordersList->package->order_date : '',
-                        'time' => $ordersList->package->order_time ?  $ordersList->package->order_time : '',
+                        'order_type' => $ordersList->package->order_type ? $ordersList->package->order_type : '',
+                        'date' => $ordersList->package->order_date ? $ordersList->package->order_date : '',
+                        'time' => $ordersList->package->order_time ? $ordersList->package->order_time : '',
                         'amount' => $ordersList->total_amount ? $ordersList->total_amount : 0,
-                        'status' => $ordersList->package->status ?  $ordersList->package->status : '',
+                        'status' => $ordersList->package->status ? $ordersList->package->status : '',
 
                         // sender address details
                         // 'sender_address_id' => $senderAddress->id ?  $senderAddress->id : '',
                         // 'sender_user_id' => $senderAddress->user_id ?  $senderAddress->user_id : '',
-                        'sender_address_type' => isset($senderAddress->address_type) ?  $senderAddress->address_type : '',
-                        'sender_address' => isset($senderAddress->address) ?  $senderAddress->address : '',
+                        'sender_address_type' => isset($senderAddress->address_type) ? $senderAddress->address_type : '',
+                        'sender_address' => isset($senderAddress->address) ? $senderAddress->address : '',
                         // 'sender_name' => $senderAddress->recipient_name ?  $senderAddress->recipient_name : '',
                         // 'sender_phone' => $senderAddress->recipient_phone ?  (string)$senderAddress->recipient_phone : '',
                         // 'sender_is_primary' => $senderAddress->is_primary ?  $senderAddress->is_primary : 0,
@@ -388,8 +465,8 @@ class DriverController extends Controller
                         // reciever address details
                         // 'reciever_address_id' => $recieverAddress->id ?  $recieverAddress->id : '',
                         // 'reciever_user_id' => $recieverAddress->user_id ?  $recieverAddress->user_id : '',
-                        'reciever_address_type' => isset($recieverAddress->address_type) ?  $recieverAddress->address_type : '',
-                        'reciever_address' => isset($recieverAddress->address) ?  $recieverAddress->address : '',
+                        'reciever_address_type' => isset($recieverAddress->address_type) ? $recieverAddress->address_type : '',
+                        'reciever_address' => isset($recieverAddress->address) ? $recieverAddress->address : '',
                         // 'reciever_name' => $recieverAddress->recipient_name ?  $recieverAddress->recipient_name : '',
                         // 'reciever_phone' => $recieverAddress->recipient_phone ?  (string)$recieverAddress->recipient_phone : '',
                         // 'reciever_is_primary' => $recieverAddress->is_primary ?  $recieverAddress->is_primary : 0,
@@ -446,29 +523,29 @@ class DriverController extends Controller
                     }
                     // exit();
                     if (isset($user)) {
-                        $senderAddress  = Address::where('id', $package->sender_address_id)->first();
-                        $recieverAddress  = Address::where('id', $package->delivery_address_id)->first();
+                        $senderAddress = Address::where('id', $package->sender_address_id)->first();
+                        $recieverAddress = Address::where('id', $package->delivery_address_id)->first();
                         $image_url = [];
                         if (isset($senderAddress) && isset($recieverAddress)) {
                             $response = array(
 
                                 // order details
-                                'id' => $orderDetails->order->id ?  $orderDetails->order->id : '',
-                                'order_id' => $orderDetails->order->order_id ?  $orderDetails->order->order_id : '',
-                                'chat_id' => $orderDetails->order->chat_id ?  $orderDetails->order->chat_id : '',
-                                'user_id' => $orderDetails->order->user_id ?  $orderDetails->order->user_id : '',
-                                'payment_method' => $orderDetails->order->payment_type ?  $orderDetails->order->payment_type : '',
-                                'merchant_id' => $orderDetails->order->merchant_id ?  $orderDetails->order->merchant_id : '',
+                                'id' => $orderDetails->order->id ? $orderDetails->order->id : '',
+                                'order_id' => $orderDetails->order->order_id ? $orderDetails->order->order_id : '',
+                                'chat_id' => $orderDetails->order->chat_id ? $orderDetails->order->chat_id : '',
+                                'user_id' => $orderDetails->order->user_id ? $orderDetails->order->user_id : '',
+                                'payment_method' => $orderDetails->order->payment_type ? $orderDetails->order->payment_type : '',
+                                'merchant_id' => $orderDetails->order->merchant_id ? $orderDetails->order->merchant_id : '',
 
                                 // parcel details
-                                'weight' => $package->weight ?  $package->weight : '',
-                                'fragile' => $package->is_fragile ?  $package->is_fragile : 0,
-                                'air_cool' => $package->need_aircool ?  $package->need_aircool : 0,
+                                'weight' => $package->weight ? $package->weight : '',
+                                'fragile' => $package->is_fragile ? $package->is_fragile : 0,
+                                'air_cool' => $package->need_aircool ? $package->need_aircool : 0,
                                 // 'vehicle_type' => $package->vehicle_type ?  $package->vehicle_type : '',
-                                'parcel_description' => $package->parcel_description ?  $package->parcel_description : '',
-                                'order_type' => $package->order_type ?  $package->order_type : '',
-                                'date' => $package->order_date ?  $package->order_date : '',
-                                'time' => $package->order_time ?  $package->order_time : '',
+                                'parcel_description' => $package->parcel_description ? $package->parcel_description : '',
+                                'order_type' => $package->order_type ? $package->order_type : '',
+                                'date' => $package->order_date ? $package->order_date : '',
+                                'time' => $package->order_time ? $package->order_time : '',
                                 'amount' => $orderDetails->order->total_amount ? $orderDetails->order->total_amount : 0,
                                 // 'status' => $package->status ?  $package->status : '',
                                 // 'vehicle_type' => $package->vehicle_type ?  $package->vehicle_type : '',
@@ -479,10 +556,10 @@ class DriverController extends Controller
                                 // sender address details
                                 // 'sender_address_id' => $senderAddress->id ?  $senderAddress->id : '',
                                 // 'sender_user_id' => $senderAddress->user_id ?  $senderAddress->user_id : '',
-                                'sender_address_type' => $senderAddress->address_type ?  $senderAddress->address_type : '',
-                                'sender_address' => $senderAddress->address ?  $senderAddress->address : '',
-                                'sender_name' => $senderAddress->recipient_name ?  $senderAddress->recipient_name : '',
-                                'sender_phone' => $senderAddress->recipient_phone ?  (string)$senderAddress->recipient_phone : '',
+                                'sender_address_type' => $senderAddress->address_type ? $senderAddress->address_type : '',
+                                'sender_address' => $senderAddress->address ? $senderAddress->address : '',
+                                'sender_name' => $senderAddress->recipient_name ? $senderAddress->recipient_name : '',
+                                'sender_phone' => $senderAddress->recipient_phone ? (string)$senderAddress->recipient_phone : '',
                                 // 'sender_is_primary' => $senderAddress->is_primary ?  $senderAddress->is_primary : 0,
                                 'sender_city' => $senderAddress->city ? $senderAddress->city : '',
                                 'sender_street' => $senderAddress->street ? $senderAddress->street : '',
@@ -495,10 +572,10 @@ class DriverController extends Controller
                                 // reciever address details
                                 // 'reciever_address_id' => $recieverAddress->id ?  $recieverAddress->id : '',
                                 // 'reciever_user_id' => $recieverAddress->user_id ?  $recieverAddress->user_id : '',
-                                'reciever_address_type' => $recieverAddress->address_type ?  $recieverAddress->address_type : '',
-                                'reciever_address' => $recieverAddress->address ?  $recieverAddress->address : '',
-                                'reciever_name' => $recieverAddress->recipient_name ?  $recieverAddress->recipient_name : '',
-                                'reciever_phone' => $recieverAddress->recipient_phone ?  (string)$recieverAddress->recipient_phone : '',
+                                'reciever_address_type' => $recieverAddress->address_type ? $recieverAddress->address_type : '',
+                                'reciever_address' => $recieverAddress->address ? $recieverAddress->address : '',
+                                'reciever_name' => $recieverAddress->recipient_name ? $recieverAddress->recipient_name : '',
+                                'reciever_phone' => $recieverAddress->recipient_phone ? (string)$recieverAddress->recipient_phone : '',
                                 // 'reciever_is_primary' => $recieverAddress->is_primary ?  $recieverAddress->is_primary : 0,
                                 'reciever_city' => $recieverAddress->city ? $recieverAddress->city : '',
                                 'reciever_street' => $recieverAddress->street ? $recieverAddress->street : '',
@@ -629,14 +706,14 @@ class DriverController extends Controller
                     $data = [];
                     foreach ($activeOrders as $activeOrder) {
                         $ordersList = Order::where('id', $activeOrder->order_id)->with('package')->first();
-                        $senderAddress  = Address::where('id', $ordersList->package->sender_address_id)->first();
-                        $recieverAddress  = Address::where('id', $ordersList->package->delivery_address_id)->first();
+                        $senderAddress = Address::where('id', $ordersList->package->sender_address_id)->first();
+                        $recieverAddress = Address::where('id', $ordersList->package->delivery_address_id)->first();
                         $data[] = array(
                             "id" => $ordersList->id,
                             "order_id" => $ordersList->order_id,
                             "date" => $ordersList->package->order_date,
                             "time" => $ordersList->package->order_time ? $ordersList->package->order_time : '',
-                            "order_type" => $ordersList->package->order_type ?  $ordersList->package->order_type : '',
+                            "order_type" => $ordersList->package->order_type ? $ordersList->package->order_type : '',
 
                             'sender_city' => $senderAddress->city ? $senderAddress->city : '',
                             'sender_street' => $senderAddress->street ? $senderAddress->street : '',
@@ -686,14 +763,14 @@ class DriverController extends Controller
                     $data = [];
                     foreach ($activeOrders as $activeOrder) {
                         $ordersList = Order::where('id', $activeOrder->order_id)->with('package')->first();
-                        $senderAddress  = Address::where('id', $ordersList->package->sender_address_id)->first();
-                        $recieverAddress  = Address::where('id', $ordersList->package->delivery_address_id)->first();
+                        $senderAddress = Address::where('id', $ordersList->package->sender_address_id)->first();
+                        $recieverAddress = Address::where('id', $ordersList->package->delivery_address_id)->first();
                         $data[] = array(
                             "id" => $ordersList->id,
                             "order_id" => $ordersList->order_id,
                             "date" => $ordersList->package->order_date,
                             "time" => $ordersList->package->order_time ? $ordersList->package->order_time : '',
-                            "order_type" => $ordersList->package->order_type ?  $ordersList->package->order_type : '',
+                            "order_type" => $ordersList->package->order_type ? $ordersList->package->order_type : '',
 
                             'sender_city' => $senderAddress->city ? $senderAddress->city : '',
                             'sender_street' => $senderAddress->street ? $senderAddress->street : '',
@@ -787,6 +864,7 @@ class DriverController extends Controller
             ], 200);
         }
     }
+
     public function reviewDriver(Request $request)
     {
         try {
@@ -883,20 +961,20 @@ class DriverController extends Controller
                     if ($driverData->fullname) {
                         $fullname = explode(' ', $driverData->fullname);
                         $firstname = $fullname[0];
-                        $lastname =  $fullname[1];
+                        $lastname = $fullname[1];
                     }
                     // $path = 'uploads/user_profile/thumb';
                     // $profileImage = config('app.url') . '/' . $path . '/' . $driverData->profile;
                     $data = array(
-                        'id' => $driverData->id ?  $driverData->id : '',
-                        'email' => $driverData->email ?  $driverData->email : '',
-                        'phone' => $driverData->phone ?  (string)$driverData->phone : '',
-                        'firstname' => $fullname ?  $firstname : '',
-                        'lastname' => $fullname ?  $lastname : '',
-                        'emirates_id' => $driverData->emirates_id ?  $driverData->emirates_id : '',
-                        'address' => $driverData->address ?  $driverData->address : '',
-                        'city' => $driverData->city ?  $driverData->city : '',
-                        'profile_image' => $driverData->image_url ?  $driverData->image_url : ''
+                        'id' => $driverData->id ? $driverData->id : '',
+                        'email' => $driverData->email ? $driverData->email : '',
+                        'phone' => $driverData->phone ? (string)$driverData->phone : '',
+                        'firstname' => $fullname ? $firstname : '',
+                        'lastname' => $fullname ? $lastname : '',
+                        'emirates_id' => $driverData->emirates_id ? $driverData->emirates_id : '',
+                        'address' => $driverData->address ? $driverData->address : '',
+                        'city' => $driverData->city ? $driverData->city : '',
+                        'profile_image' => $driverData->image_url ? $driverData->image_url : ''
                     );
                     return $this->success('Driver profile updated Successfully', $data);
                 } else {
@@ -967,13 +1045,13 @@ class DriverController extends Controller
     }
 
 
- public function getOfferDeliver()
+    public function getOfferDeliver()
     {
 
         try {
             $data = [];
 
-            $OffersDivere =  OffersDivere::all();
+            $OffersDivere = OffersDivere::all();
 
             if (isset($OffersDivere)) {
                 foreach ($OffersDivere as $offers) {
@@ -1021,13 +1099,12 @@ class DriverController extends Controller
                 ]);
 
                 return $this->success('Created Offers driver Success ', $data);
-            }else{
+            } else {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Somethingwent wrong, please try again later!!'
                 ], 200);
             }
-
 
 
         } catch (Exception $e) {
@@ -1039,7 +1116,7 @@ class DriverController extends Controller
     }
 
 
-   public function acceptOfferDriver(Request $request)
+    public function acceptOfferDriver(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -1102,7 +1179,7 @@ class DriverController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     // public function updateProfile(Request $request)
