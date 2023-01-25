@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Driver;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
@@ -29,81 +30,212 @@ class DriverController extends Controller
     public function register(Request $request)
     {
         try {
+
             $validator = Validator::make($request->all(), [
-                'firstname' => 'bail|required|string|max:255',
-                'lastname' => 'required|string|max:255',
-                'email' => 'bail|required|string|email|max:255',
-                'phone' => 'required|min:10',
-            ],
-                [
-                    'firstname.required' => 'أدخل الإسم الأول',
-                    'lastname.required' => 'أدخل الإسم الأخير',
-                    'email.required' => 'أدخل البريد الإلكتروني',
-                    'email.email' => 'أدخل بريد إلكتروني صحيح',
-                    'phone.min' => 'رقم الهاتف غير صحيح'
+                'firstname' => "required",
+                "lastname" => "required",
+                "date" => "required",
+                "email" => "required|unique:users,email|email|unique:drivers,email",
+                "phone" => "required",
+                "password" => "required",
+                "gender" => "required",
+                'licenseImage' => 'required',
+
+                'vehicle_type' => "required|in:van,car,bike",
+                "model" => "required",
+                "vehicle_number" => "required",
+                "vehicleImage" => 'required',
+
+                "profileImage" => "mimes:jpg,jpeg,png,svg,gif|max:2048",
+                "distance" => "required",
+                "emirates_id" => "required",
+                "address" => "required",
+                "company" => "required"
+            ]);
+
+            $data = [];
+
+            if ($validator->fails()) {
+                return $this->error($validator->errors()->first(), 200);
+            }
+
+
+            /**
+             * Prepares a Profile image for storing.
+             *
+             * @param mixed $request
+             * @return bool
+             * @author Nived
+             */
+            $profilenametostore = '';
+            if ($request->hasFile('profileImage')) {
+                $profileImage = $request->file('profileImage');
+                $filenamewithextension = $profileImage->getClientOriginalName();
+                $profilename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
+                $extension = $profileImage->getClientOriginalExtension();
+
+                $profilenametostore = uniqid() . '.' . $extension;
+
+                Storage::put('public/driver/profile/' . $profilenametostore, fopen($profileImage, 'r+'));
+                Storage::put('public/driver/profile/thumbnail/' . $profilenametostore, fopen($profileImage, 'r+'));
+
+                $profileThumbnailpath = public_path('storage/driver/profile/thumbnail/' . $profilenametostore);
+                $img = Image::make($profileThumbnailpath);
+                $img->resize(500, 500, function ($const) {
+                    $const->aspectRatio();
+                })->save($profileThumbnailpath);
+            }
+
+
+            /**
+             * Prepares a License image for storing.
+             *
+             * @param mixed $request
+             * @return bool
+             * @author Nived
+             */
+            $licenseFileName = '';
+            if ($request->hasFile('licenseImage')) {
+                // $imageName = '';
+                foreach ($request->file('licenseImage') as $licensefile) {
+
+                    //get filename with extension
+                    $licensefilenamewithextension = $licensefile->getClientOriginalName();
+
+                    //get filename without extension
+                    $licensefilesname = pathinfo($licensefilenamewithextension, PATHINFO_FILENAME);
+
+                    //get file extension
+                    $licenseextension = $licensefile->getClientOriginalExtension();
+
+                    //filename to store
+                    $licensefilenametostore = uniqid() . '.' . $licenseextension;
+                    $licenseFileName = $licenseFileName . $licensefilenametostore . ",";
+                    Storage::put('public/driver/license/' . $licensefilenametostore, fopen($licensefile, 'r+'));
+                    Storage::put('public/driver/license/thumbnail/' . $licensefilenametostore, fopen($licensefile, 'r+'));
+
+                    //Resize image here
+                    $licensethumbnailpath = public_path('storage/driver/license/thumbnail/' . $licensefilenametostore);
+                    $img = Image::make($licensethumbnailpath)->resize(500, 500, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    $img->save($licensethumbnailpath);
+                }
+            }
+            /**
+             * Prepares a emirates id image for storing.
+             *
+             * @param mixed $request
+             * @return bool
+             * @author Nived
+             */
+
+            $emiratesFileName = '';
+            if ($request->hasFile('emirates_id')) {
+                // $imageName = '';
+                foreach ($request->file('emirates_id') as $emiratesfile) {
+
+                    //get filename with extension
+                    $emiratesfilenamewithextension = $emiratesfile->getClientOriginalName();
+
+                    //get filename without extension
+                    $emiratesfilesname = pathinfo($emiratesfilenamewithextension, PATHINFO_FILENAME);
+
+                    //get file extension
+                    $emiratesextension = $emiratesfile->getClientOriginalExtension();
+
+                    //filename to store
+                    $emiratesfilenametostore = uniqid() . '.' . $emiratesextension;
+                    $emiratesFileName = $emiratesFileName . $emiratesfilenametostore . ",";
+                    Storage::put('public/driver/emirates/' . $emiratesfilenametostore, fopen($emiratesfile, 'r+'));
+                    Storage::put('public/driver/emirates/thumbnail/' . $emiratesfilenametostore, fopen($emiratesfile, 'r+'));
+
+                    //Resize image here
+                    $emiratesthumbnailpath = public_path('storage/driver/emirates/thumbnail/' . $emiratesfilenametostore);
+                    $img = Image::make($emiratesthumbnailpath)->resize(500, 500, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    $img->save($emiratesthumbnailpath);
+                }
+            }
+
+            /**
+             * Prepares a vehicle image for storing.
+             *
+             * @param mixed $request
+             * @return bool
+             * @author Nived
+             */
+
+            $vehicleFileName = '';
+            if ($request->hasFile('vehicleImage')) {
+                // $imageName = '';
+                foreach ($request->file('vehicleImage') as $vehiclefile) {
+
+                    //get filename with extension
+                    $vehiclefilenamewithextension = $vehiclefile->getClientOriginalName();
+
+                    //get filename without extension
+                    $vehiclefilesname = pathinfo($vehiclefilenamewithextension, PATHINFO_FILENAME);
+
+                    //get file extension
+                    $vehicleextension = $vehiclefile->getClientOriginalExtension();
+
+                    //filename to store
+                    $vehiclefilenametostore = uniqid() . '.' . $vehicleextension;
+                    $vehicleFileName = $vehicleFileName . $vehiclefilenametostore . ",";
+                    Storage::put('public/driver/vehicle/' . $vehiclefilenametostore, fopen($vehiclefile, 'r+'));
+                    Storage::put('public/driver/vehicle/thumbnail/' . $vehiclefilenametostore, fopen($vehiclefile, 'r+'));
+
+                    //Resize image here
+                    $vehiclethumbnailpath = public_path('storage/driver/vehicle/thumbnail/' . $vehiclefilenametostore);
+                    $img = Image::make($vehiclethumbnailpath)->resize(500, 500, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    $img->save($vehiclethumbnailpath);
+                }
+            }
+
+            DB::transaction(function () use ($request, $licenseFileName, $vehicleFileName, $profilenametostore, $emiratesFileName) {
+
+
+                $data = new Driver;
+                $data['fullname'] = $request->firstname . " " . $request->lastname;
+                $data['status'] = 1;
+                $data['email'] = $request->email;
+                $data['phone'] = $request->phone;
+                $data['gender'] = $request->gender;
+                $data['dob'] = $request->date;
+                $data['address'] = $request->address;
+                $data['profile'] = $profilenametostore;
+                $data['emirates_id'] = rtrim($emiratesFileName, ',');
+                $data['distance'] = $request->distance;
+                $data['show_password'] = $request->password;
+                $data['password'] = $request->password ? bcrypt($request->password) : "";
+                $data['licence_file'] = rtrim($licenseFileName, ',');
+                $data['unique_id'] = uniqid();
+                $data['company_id'] = $request->company;
+                $data->save();
+
+                $vehicles = Vehicle::create([
+                    'file_path' => rtrim($vehicleFileName, ','),
+                    'driver_id' => $data->id,
+                    'model' => $request->model,
+                    'type' => $request->vehicle_type,
+                    'vehicle_number' => $request->vehicle_number
                 ]);
 
 
-            if ($validator->fails()) {
-                // return $this->error($validator->errors()->first(), 200);
-                return response()->json([
-                    'status' => 'error',
-                    'message' => $validator->errors()->first()
-                ], 200);
-            }
-            DB::transaction(function () use ($request, &$data) {
-                $request['remember_token'] = Str::random(10);
-
-                $request['language'] = $request['language'] ? $request['language']  : 'en';
-
-                $phone = Driver::where('phone', $request->phone)->first();
-                $email = Driver::where('email', $request->email)->first();
-                if( $phone ){
-                    $phone->firstname = $request->firstname ? $request->firstname : $phone->firstname;
-                    $phone->lastname = $request->lastname ? $request->lastname : $phone->lastname;
-                    $phone->email = $request->email ? $request->email : $phone->email;
-                    $phone->phone = $request->phone ? $request->phone : $phone->phone;
-                    $phone->address = $request->address ? $request->address : $phone->address;
-                    $phone->language = "en";
-                    if( $phone->save() ){
-                        $user = Driver::where('id', $phone->id)->first();
-                    }
-                }else if( $email ) {
-                    $email->firstname = $request->firstname ? $request->firstname : $email->firstname;
-                    $email->lastname = $request->lastname ? $request->lastname : $email->lastname;
-                    $email->email = $request->email ? $request->email : $email->email;
-                    $email->phone = $request->phone ? $request->phone : $email->phone;
-                    $email->language = "en";
-
-                    if( $email->save() ){
-                        $user = Driver::where('id', $email->id)->first();
-                    }
-                } else {
-
-                    $user = Driver::create($request->toArray());
-                }
-
-
-                $data = array(
-                    'id' => $user->id ?  $user->id : '',
-                    'firstname' => $user->firstname ?  $user->firstname : '',
-                    'lastname' => $user->lastname ?  $user->lastname : '',
-                    'email' => $user->email ?  $user->email : '',
-                    'phone' => $user->phone ?  (string)$user->phone : '',
-                    'language' => $user->language ?  $user->language : '',
-                );
             });
-
-            // return $this->success('Registered Successfully', $data);
-            return $this->success('تسجيل الدخول بنجاح', $data);
-
-
+            return $this->success('Registered Successfully',$request->firstname);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Somethingwent wrong, please try again later!!'
             ], 200);
         }
+
+
     }
 
 
