@@ -190,7 +190,7 @@
                                         <div class="form-group row">
                                             <label class="col-md-3 label-control">Delivery Distance (in Kilometer) <span class="required" style="color:red;">*</span></label>
                                             <div class="col-md-9">
-                                                <input class="form-control border-primary" type="distance" placeholder="Enter distance that can deliver (in Kilometer)" id="distance" name="distance" value="{{ old('distance') }}">
+                                                <input class="form-control border-primary" maxlength="5" type="number" placeholder="Enter distance that can deliver (in Kilometer)" id="distance" name="distance" value="{{ old('distance') }}">
                                                 @if ($errors->has('distance'))
                                                 <span class="text-danger">{{ $errors->first('distance') }}</span>
                                                 @endif

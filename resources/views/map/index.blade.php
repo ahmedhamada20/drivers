@@ -30,12 +30,13 @@
                 var marker = new google.maps.Marker({
                     position: new google.maps.LatLng(location.lat, location.lng),
                     map: map,
-
+                    icon: '{{asset('1988880_car_front_vehicle_icon (1).png')}}'
                 });
                 bounds.extend(marker.position);
                 google.maps.event.addListener(marker, 'click', (function(marker, location) {
+
                     return function() {
-                        infowindow.setContent(location.lat + " & " + location.lng);
+                        infowindow.setContent(location.name);
                         infowindow.open(map, marker);
                     }
                 })(marker, location));
