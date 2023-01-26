@@ -179,6 +179,9 @@ return [
         Berkayk\OneSignal\OneSignalServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
+//        Mpdf\MpdfServiceProvider::class,
+
 
     ],
 
@@ -234,6 +237,9 @@ return [
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
         'Image' => Intervention\Image\Facades\Image::class,
         'OneSignal' => Berkayk\OneSignal\OneSignalFacade::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+//        'PDF' => Mpdf\Facades\Mpdf::class,
+
 
     ],
 

@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Driver;
 use App\DriverActivity;
+use App\Exports\DriverExport;
 use App\Order;
 use App\Orderstatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
@@ -18,6 +20,13 @@ class ReportController extends Controller
         $drivers = Driver::get();
 
         return view('Reports.getdrivers', compact('drivers'));
+    }
+
+    public function Reportdrrivers($id)
+    {
+        $nameDriver = Driver::findorfail($id);
+        return Excel::download(new DriverExport($id), 'Report Drivers '. $nameDriver->fullname.'.xlsx');
+//        return Excel::download(new DriverExport($id), 'Report Drivers '. $nameDriver->fullname.'.pdf',\Maatwebsite\Excel\Excel::MPDF);
     }
 
 

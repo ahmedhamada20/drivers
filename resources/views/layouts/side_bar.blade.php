@@ -222,7 +222,7 @@
                                                                             data-i18n="">Reports</span></a>
                 <ul class="menu-content">
                     @can('Drivers-report')
-                        <li>
+                        <li  @if( Request::is('admin/get/drivers/report')  ||  (Request::is('admin/get/drivers/report/*'))) class="active" @endif>
                             <a class="menu-item" href="{{route('get-drivers-report')}}"><i
                                     class="ft-chevrons-right"></i>Reports drivers </a>
 

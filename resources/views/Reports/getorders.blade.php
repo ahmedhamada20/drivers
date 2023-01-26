@@ -1,6 +1,12 @@
 @extends('layouts.app')
 @section('header_extends')
-
+    <style>
+        @media print {
+            #print_Button {
+                display: none;
+            }
+        }
+    </style>
 
 @endsection
 @section('content')
@@ -61,11 +67,23 @@
                     <div class="portlet box blue-hoki">
 
                         @isset($getOrders)
+                            <div class="row">
+                                <div class="col-lg-6 offset-lg-5 mb-2">
+
+                                    <a href="#" class="btn btn-info text-center" id="print_Button" target="print_frame" onclick="printDiv()">
+
+                                        Download PDF Orders
+                                    </a>
+                                </div>
+
+
+
+                            </div>
                             <div class="portlet-body text-center">
 
                                 <br>
                                 <h5>Orders</h5>
-                                <div class="table-responsive">
+                                <div class="table-responsive" id="print">
                                     <table class="table table-bordered">
                                         <thead>
                                         <tr>
@@ -99,7 +117,7 @@
                                         @endforeach
 
                                         <tr>
-                                            <td colspan="7">Total Amount Orders :: {{number_format($getOrdersSum,2)}}
+                                            <td colspan="8" class="text-center">Total Amount Orders :: {{number_format($getOrdersSum,2)}}
                                                 AED
                                             </td>
                                         </tr>
@@ -120,5 +138,15 @@
     </div>
 @endsection
 @section('footer_extends')
+    <script type="text/javascript">
+        function printDiv() {
+            var printContents = document.getElementById('print').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
 
+            location.reload();
+        }
+    </script>
 @endsection

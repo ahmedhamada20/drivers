@@ -1,7 +1,13 @@
 @extends('layouts.app')
 @section('header_extends')
 
-
+    <style>
+        @media print {
+            #print_Button {
+                display: none;
+            }
+        }
+    </style>
 @endsection
 @section('content')
     <div class="content-header row">
@@ -52,16 +58,16 @@
                                 </select>
                             </div>
 
-{{--                            <div class="col">--}}
-{{--                                <label>Start Date</label>--}}
-{{--                                <input type="date" name="start_data" class="form-control">--}}
-{{--                            </div>--}}
+                            {{--                            <div class="col">--}}
+                            {{--                                <label>Start Date</label>--}}
+                            {{--                                <input type="date" name="start_data" class="form-control">--}}
+                            {{--                            </div>--}}
 
 
-{{--                            <div class="col">--}}
-{{--                                <label>End Date</label>--}}
-{{--                                <input type="date" name="end_data" class="form-control">--}}
-{{--                            </div>--}}
+                            {{--                            <div class="col">--}}
+                            {{--                                <label>End Date</label>--}}
+                            {{--                                <input type="date" name="end_data" class="form-control">--}}
+                            {{--                            </div>--}}
 
                             <div class="col" style="margin-top: 24px;">
                                 <button class="btn btn-success btn-block" type="submit"> Search</button>
@@ -73,72 +79,94 @@
                     <div class="portlet box blue-hoki">
 
                         @isset($getPackageDrivers)
-                            <div class="portlet-body text-center">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                        <tr>
-                                            <th> No</th>
-                                            <th> Name Drivers</th>
-                                            <th> Email Drivers</th>
-                                            <th> Phone Drivers</th>
+                            <div class="row">
+                                <div class="col-lg-6 offset-lg-5 mb-2">
 
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <td>1</td>
-                                        <td>{{$getPackageDrivers->fullname ?? 'No Data'}}</td>
-                                        <td>{{$getPackageDrivers->email ?? 'No Data'}}</td>
-                                        <td>{{$getPackageDrivers->phone ?? 'No Data'}}</td>
+                                    <a href="#" class="btn btn-info text-center" id="print_Button" target="print_frame" onclick="printDiv()">
 
-
-                                        </tbody>
-
-                                    </table>
-
+                                       Download PDF Orders
+                                    </a>
                                 </div>
 
-                                <br>
-                                <h5>Orders</h5>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                        <tr>
-                                            <th> #</th>
-                                            <th> Package parcel description</th>
-{{--                                            <th> Drivers initial status</th>--}}
-                                            <th> Drivers approved status</th>
-                                            <th> Drivers driver status</th>
-                                            <th> Drivers driver collected status</th>
-                                            <th> Orders total amount</th>
-                                            <th> Orders status</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
+{{--                                <a href="#" class="col-lg-6 offset-lg-5 mb-2" id="print_Button" onclick="printDiv()">--}}
+{{--                                    <i class="mdi mdi-printer ml-1"></i>طباعه--}}
+{{--                                </a>--}}
 
-                                        @foreach($getPackageDrivers->getOrdersStatus as $orders)
+
+                            </div>
+                            <div class="portlet-body text-center" >
+
+
+                                    <br>
+                                    <h5>Drivers Orders</h5>
+
+
+                                    <div class="table-responsive mb-2" id="print">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                <tr>
+                                                    <th> No</th>
+                                                    <th> Name Drivers</th>
+                                                    <th> Email Drivers</th>
+                                                    <th> Phone Drivers</th>
+
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <td>1</td>
+                                                <td>{{$getPackageDrivers->fullname ?? 'No Data'}}</td>
+                                                <td>{{$getPackageDrivers->email ?? 'No Data'}}</td>
+                                                <td>{{$getPackageDrivers->phone ?? 'No Data'}}</td>
+
+
+                                                </tbody>
+
+                                            </table>
+
+                                        </div>
+                                        <br>
+
+                                        <table class="table table-bordered">
+                                            <thead>
                                             <tr>
-                                                <td>{{$loop->index +1 }}</td>
-                                                <td>{{$orders->order->package->parcel_description ?? 'No Data'}}</td>
-{{--                                                <td>{{$orders->initial_status ?? 'No Data'}}</td>--}}
-                                                <td>{{$orders->approved_status ?? 'No Data'}}</td>
-                                                <td>{{$orders->driver_status ?? 'No Data'}}</td>
-                                                <td>{{$orders->driver_collected_status ?? 'No Data'}}</td>
-                                                <td>{{$orders->order->total_amount ?? 'No Data'}} AED</td>
-                                                <td>{{$orders->order->status ?? 'No Data'}}</td>
+                                                <th> #</th>
+                                                <th> Package parcel description</th>
+                                                {{--                                            <th> Drivers initial status</th>--}}
+                                                <th> Drivers approved status</th>
+                                                <th> Drivers driver status</th>
+                                                <th> Drivers driver collected status</th>
+                                                <th> Orders total amount</th>
+                                                <th> Orders status</th>
                                             </tr>
-                                        @endforeach
-                                        <tr>
-                                            <td colspan="7" class="text-center text-danger">Total Orders Delivered
-                                                :: {{ number_format($getPackageDrivers->getSumTotal(),2)}} AED
-                                            </td>
-                                        </tr>
+                                            </thead>
+                                            <tbody>
 
-                                        </tbody>
+                                            @foreach($getPackageDrivers->getOrdersStatus as $orders)
+                                                <tr>
+                                                    <td>{{$loop->index +1 }}</td>
+                                                    <td>{{$orders->order->package->parcel_description ?? 'No Data'}}</td>
+                                                    {{--                                                <td>{{$orders->initial_status ?? 'No Data'}}</td>--}}
+                                                    <td>{{$orders->approved_status ?? 'No Data'}}</td>
+                                                    <td>{{$orders->driver_status ?? 'No Data'}}</td>
+                                                    <td>{{$orders->driver_collected_status ?? 'No Data'}}</td>
+                                                    <td>{{$orders->order->total_amount ?? 'No Data'}} AED</td>
+                                                    <td>{{$orders->order->status ?? 'No Data'}}</td>
+                                                </tr>
+                                            @endforeach
+                                            <tr>
+                                                <td colspan="7" class="text-center text-danger">Total Orders Delivered
+                                                    :: {{ number_format($getPackageDrivers->getSumTotal(),2)}} AED
+                                                </td>
+                                            </tr>
 
-                                    </table>
+                                            </tbody>
 
-                                </div>
+                                        </table>
+
+                                    </div>
+
+
 
                             </div>
                         @endisset
@@ -149,5 +177,15 @@
     </div>
 @endsection
 @section('footer_extends')
+    <script type="text/javascript">
+        function printDiv() {
+            var printContents = document.getElementById('print').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
 
+            location.reload();
+        }
+    </script>
 @endsection

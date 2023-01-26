@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+
 Route::get('/', function () {
     // return view('welcome');
     return view('index');
@@ -35,22 +37,25 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Route::get('/dashboard', 'HomeController@dashboard')->name('admin.home')->middleware('is_admin');
 
 
+    Route::get('Reportdrrivers/{id}', 'ReportController@Reportdrrivers')->name('Reportdrrivers');
+
+
     // get Location In Map
-    Route::get('getLocations','ReportController@getLocations')->name('getLocations');
-            Route::get('getAllLocationsDriver','ReportController@getAllLocationsDriver')->name('getAllLocationsDriver');
+    Route::get('getLocations', 'ReportController@getLocations')->name('getLocations');
+    Route::get('getAllLocationsDriver', 'ReportController@getAllLocationsDriver')->name('getAllLocationsDriver');
 
     // Reports
-     Route::get('get/drivers/report', 'ReportController@getdrivers')->name('get-drivers-report');
-     Route::get('search_drivers', 'ReportController@search_drivers')->name('search_drivers');
+    Route::get('get/drivers/report', 'ReportController@getdrivers')->name('get-drivers-report');
+    Route::get('search_drivers', 'ReportController@search_drivers')->name('search_drivers');
 
-     Route::get('get/orders/report', 'ReportController@getorders')->name('get-orders-report');
-     Route::get('search_Orders', 'ReportController@search_Orders')->name('search_Orders');
+    Route::get('get/orders/report', 'ReportController@getorders')->name('get-orders-report');
+    Route::get('search_Orders', 'ReportController@search_Orders')->name('search_Orders');
 
     // Admins
     Route::get('/admins/index', 'AdminController@index')->name('admins.index');
     Route::get('live-search/admins', 'AdminController@searchBox')->name('live_search_admins.action');
-    Route::get('admins/edit/{id}','AdminController@edit')->name('admins.edit');
-    Route::post('admins/update','AdminController@update')->name('admins.update');
+    Route::get('admins/edit/{id}', 'AdminController@edit')->name('admins.edit');
+    Route::post('admins/update', 'AdminController@update')->name('admins.update');
     // profile
     Route::get('/profile', 'ProfileController@index')->name('profile.view');
     // Users Route::get('/users', 'UserController@index')->name('users.index');
@@ -110,8 +115,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('banner/delete', 'BannerController@delete')->name('banner.delete');
 
 
-
-  // companyOffres
+    // companyOffres
     Route::post('companyOffres/delete/{id}/', 'CompanyOffresController@destroy')->name('companyOffres.delete');
     Route::get('/companyOffres/view/{id}', 'CompanyOffresController@viewDriverdetails')->name('companyOffres.view');
     Route::get('/companyOffres/create', 'CompanyOffresController@create')->name('companyOffres.create');
@@ -144,13 +148,13 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/special-city/delete', 'SpecialCityController@deleteSpecialCity')->name('special-city.delete');
     Route::post('/special-city/store', 'SpecialCityController@storeSpecialCity')->name('special-city.store');
 
-  //----- Promo code Apis route start ------- //
+    //----- Promo code Apis route start ------- //
     Route::get('/promocode/create', 'PromoCodeController@create')->name('promocode.create');
-	Route::post('/promocode/store', 'PromoCodeController@store')->name('promocode.store');
+    Route::post('/promocode/store', 'PromoCodeController@store')->name('promocode.store');
     Route::get('/promocode/index', 'PromoCodeController@index')->name('promocode.index');
-     Route::get('promocode/fetch', 'PromoCodeController@fetch')->name('promocode.fetch');
+    Route::get('promocode/fetch', 'PromoCodeController@fetch')->name('promocode.fetch');
 
- //----- Promo code Apis route end ------- //
+    //----- Promo code Apis route end ------- //
 
 });
 
