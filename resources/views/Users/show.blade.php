@@ -77,7 +77,8 @@
                             <h3 class="card-title">{{$user->firstname}} {{$user->lastname}}</h3>
                             <p>{{$user->email}}</p>
                             <p>{{$user->phone}}</p>
-                            
+                            <p> points :  {{$user->points}}</p>
+
                         </div>
                     </div>
                 </div>
