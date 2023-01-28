@@ -50,6 +50,7 @@ class OrderController extends Controller
                 // check user
                 $existingUser = User::find($request->user_id);
                 if ($existingUser) {
+
                     // package required
                     if (isset($request->package_id)) {
                         // check package
@@ -94,16 +95,16 @@ class OrderController extends Controller
                                 $order->save();
 
                                 $orderStatus = new Orderstatus;
-                                $orderStatus->order_id = $order->id ?  $order->id : '';
-                                $orderStatus->initial_status = $request->initial_status ?  $request->initial_status : "pending";
-                                $orderStatus->approved_status = $request->approved_status ?  $request->approved_status : "pending";
-                                $orderStatus->driver_status = $request->driver_status ?  $request->driver_status : "pending";
-                                $orderStatus->driver_collected_status = $request->driver_collected_status ?  $request->driver_collected_status : "pending";
-                                $orderStatus->delivery_status = $request->delivery_status ?  $request->delivery_status : "pending";
+                                $orderStatus->order_id = $order->id ? $order->id : '';
+                                $orderStatus->initial_status = $request->initial_status ? $request->initial_status : "pending";
+                                $orderStatus->approved_status = $request->approved_status ? $request->approved_status : "pending";
+                                $orderStatus->driver_status = $request->driver_status ? $request->driver_status : "pending";
+                                $orderStatus->driver_collected_status = $request->driver_collected_status ? $request->driver_collected_status : "pending";
+                                $orderStatus->delivery_status = $request->delivery_status ? $request->delivery_status : "pending";
                                 if (isset($request->driver_id)) {
                                     $driverDetails = Driver::where('id', $request->driver_id)->first();
                                     if ($driverDetails) {
-                                        $orderStatus->driver_id = $request->driver_id ?  $driverDetails->id : 0;
+                                        $orderStatus->driver_id = $request->driver_id ? $driverDetails->id : 0;
                                     }
                                 }
 
@@ -120,25 +121,32 @@ class OrderController extends Controller
                                 $data = array(
                                     "id" => $order->id,
                                     "order_status" => $order->status ? $order->status : "pending",
-                                    "order_id" => $order->order_id ?  $order->order_id : '',
-                                    'chat_id' => $order->chat_id ?  $order->chat_id : '',
-                                    "user_id" => $order->user_id ?  $order->user_id : '',
-                                    "package_id" => $order->package_id ?  $order->package_id : '',
-                                    "company_id" => $order->company_id ?  $order->company_id : '',
-                                    "merchant_id" => $order->merchant_id ?  $order->merchant_id : '',
-                                    "payment_method" => $order->payment_type ?  $order->payment_type : '',
-                                    "payment_id" => $order->payment_id ?  $order->payment_id : '',
+                                    "order_id" => $order->order_id ? $order->order_id : '',
+                                    'chat_id' => $order->chat_id ? $order->chat_id : '',
+                                    "user_id" => $order->user_id ? $order->user_id : '',
+                                    "package_id" => $order->package_id ? $order->package_id : '',
+                                    "company_id" => $order->company_id ? $order->company_id : '',
+                                    "merchant_id" => $order->merchant_id ? $order->merchant_id : '',
+                                    "payment_method" => $order->payment_type ? $order->payment_type : '',
+                                    "payment_id" => $order->payment_id ? $order->payment_id : '',
                                     "total_amount" => $order->total_amount ? $order->total_amount : '',
-                                    'initial_status' => $orderStatus->initial_status ?  $orderStatus->initial_status : '',
-                                    'approved_status' => $orderStatus->approved_status ?  $orderStatus->approved_status : '',
-                                    'driver_status' => $orderStatus->driver_status ?  $orderStatus->driver_status : '',
-                                    'driver_collected_status' => $orderStatus->driver_collected_status ?  $orderStatus->driver_collected_status : '',
-                                    'delivery_status' => $orderStatus->delivery_status ?  $orderStatus->delivery_status : '',
-                                    'driver_id' => $orderStatus->driver_id ?  $orderStatus->driver_id : 'Please wait we are assigning a driver for you',
-                                    'driver_name' =>  '',
+                                    'initial_status' => $orderStatus->initial_status ? $orderStatus->initial_status : '',
+                                    'approved_status' => $orderStatus->approved_status ? $orderStatus->approved_status : '',
+                                    'driver_status' => $orderStatus->driver_status ? $orderStatus->driver_status : '',
+                                    'driver_collected_status' => $orderStatus->driver_collected_status ? $orderStatus->driver_collected_status : '',
+                                    'delivery_status' => $orderStatus->delivery_status ? $orderStatus->delivery_status : '',
+                                    'driver_id' => $orderStatus->driver_id ? $orderStatus->driver_id : 'Please wait we are assigning a driver for you',
+                                    'driver_name' => '',
                                     'driver_phone' => '',
                                     'driver_email' => ''
                                 );
+
+                                if ($data) {
+                                    $updatedPoints = User::find($request->user_id);
+                                    $updatedPoints->update([
+                                        'points' => $updatedPoints->points + 5,
+                                    ]);
+                                }
                             });
 
                             return $this->success('Order placed successfully', $data);
@@ -161,6 +169,7 @@ class OrderController extends Controller
             ], 200);
         }
     }
+
     public function cancelOrder(Request $request)
     {
         try {
@@ -175,15 +184,15 @@ class OrderController extends Controller
             if (isset($request->order_id)) {
                 // check user
                 $order = Order::find($request->order_id);
-                $order->cancel_reason=$request->cancel_reason;
+                $order->cancel_reason = $request->cancel_reason;
                 if ($order) {
                     DB::transaction(function () use ($order, &$data) {
                         $order->update([
                             'status' => 'cancel',
-                            'cancel_reason'=>$order->cancel_reason
+                            'cancel_reason' => $order->cancel_reason
                         ]);
                         // One signal notification
-                        try{
+                        try {
                             OneSignal::sendNotificationToAll(
                                 "Your order is canceled.",
                                 $url = null,
@@ -191,20 +200,20 @@ class OrderController extends Controller
                                 $buttons = null,
                                 $schedule = null
                             );
-                        }catch(Exception $e){
+                        } catch (Exception $e) {
                             Log::info("api --cancelOrder -- Notification send error: " . $e);
                         }
                         $data = array(
                             "id" => $order->id,
                             "order_status" => "cancel",
-                            "order_id" => $order->order_id ?  $order->order_id : '',
-                            'chat_id' => $order->chat_id ?  $order->chat_id : '',
-                            "user_id" => $order->user_id ?  $order->user_id : '',
-                            "package_id" => $order->package_id ?  $order->package_id : '',
-                            "company_id" => $order->company_id ?  $order->company_id : '',
-                            "merchant_id" => $order->merchant_id ?  $order->merchant_id : '',
-                            "payment_method" => $order->payment_type ?  $order->payment_type : '',
-                            "payment_id" => $order->payment_id ?  $order->payment_id : '',
+                            "order_id" => $order->order_id ? $order->order_id : '',
+                            'chat_id' => $order->chat_id ? $order->chat_id : '',
+                            "user_id" => $order->user_id ? $order->user_id : '',
+                            "package_id" => $order->package_id ? $order->package_id : '',
+                            "company_id" => $order->company_id ? $order->company_id : '',
+                            "merchant_id" => $order->merchant_id ? $order->merchant_id : '',
+                            "payment_method" => $order->payment_type ? $order->payment_type : '',
+                            "payment_id" => $order->payment_id ? $order->payment_id : '',
                             "total_amount" => $order->total_amount ? $order->total_amount : '',
                             "cancel_reason" => $order->cancel_reason ? $order->cancel_reason : ''
                         );
@@ -224,6 +233,7 @@ class OrderController extends Controller
             ], 200);
         }
     }
+
     public function orderStatus(Request $request)
     {
         try {
@@ -245,32 +255,32 @@ class OrderController extends Controller
 
                     if (isset($orderDetails->driver_id)) {
                         $response = array(
-                            'id' => $order->id ?  $order->id : '',
-                            'order_id' => $order->order_id ?  $order->order_id : '',
-                            'chat_id' => $order->chat_id ?  $order->chat_id : '',
-                            'initial_status' => $orderDetails->initial_status ?  $orderDetails->initial_status : '',
-                            'approved_status' => $orderDetails->approved_status ?  $orderDetails->approved_status : '',
-                            'driver_status' => $orderDetails->driver_status ?  $orderDetails->driver_status : '',
-                            'driver_collected_status' => $orderDetails->driver_collected_status ?  $orderDetails->driver_collected_status : '',
-                            'delivery_status' => $orderDetails->delivery_status ?  $orderDetails->delivery_status : '',
-                            'driver_id' => $orderDetails->driver_id ?  (string)$orderDetails->driver_id : '',
-                            'driver_name' => $driverDetails->fullname ?  $driverDetails->fullname : '',
-                            'driver_phone' => $driverDetails->phone ?  (string)$driverDetails->phone : '',
-                            'driver_email' => $driverDetails->email ?  $driverDetails->email : '',
+                            'id' => $order->id ? $order->id : '',
+                            'order_id' => $order->order_id ? $order->order_id : '',
+                            'chat_id' => $order->chat_id ? $order->chat_id : '',
+                            'initial_status' => $orderDetails->initial_status ? $orderDetails->initial_status : '',
+                            'approved_status' => $orderDetails->approved_status ? $orderDetails->approved_status : '',
+                            'driver_status' => $orderDetails->driver_status ? $orderDetails->driver_status : '',
+                            'driver_collected_status' => $orderDetails->driver_collected_status ? $orderDetails->driver_collected_status : '',
+                            'delivery_status' => $orderDetails->delivery_status ? $orderDetails->delivery_status : '',
+                            'driver_id' => $orderDetails->driver_id ? (string)$orderDetails->driver_id : '',
+                            'driver_name' => $driverDetails->fullname ? $driverDetails->fullname : '',
+                            'driver_phone' => $driverDetails->phone ? (string)$driverDetails->phone : '',
+                            'driver_email' => $driverDetails->email ? $driverDetails->email : '',
                             "order_status" => $order->status ? $order->status : ''
                         );
                     } else {
                         $response = array(
-                            'id' => $order->id ?  $order->id : '',
-                            'order_id' => $order->order_id ?  $order->order_id : '',
-                            'chat_id' => $order->chat_id ?  $order->chat_id : '',
-                            'initial_status' => $orderDetails->initial_status ?  $orderDetails->initial_status : '',
-                            'approved_status' => $orderDetails->approved_status ?  $orderDetails->approved_status : '',
-                            'driver_status' => $orderDetails->driver_status ?  $orderDetails->driver_status : '',
-                            'driver_collected_status' => $orderDetails->driver_collected_status ?  $orderDetails->driver_collected_status : '',
-                            'delivery_status' => $orderDetails->delivery_status ?  $orderDetails->delivery_status : '',
-                            'driver_id' => $orderDetails->driver_id ?  (string)$orderDetails->driver_id : 'Please wait we are assigning a driver for you',
-                            'driver_name' =>  '',
+                            'id' => $order->id ? $order->id : '',
+                            'order_id' => $order->order_id ? $order->order_id : '',
+                            'chat_id' => $order->chat_id ? $order->chat_id : '',
+                            'initial_status' => $orderDetails->initial_status ? $orderDetails->initial_status : '',
+                            'approved_status' => $orderDetails->approved_status ? $orderDetails->approved_status : '',
+                            'driver_status' => $orderDetails->driver_status ? $orderDetails->driver_status : '',
+                            'driver_collected_status' => $orderDetails->driver_collected_status ? $orderDetails->driver_collected_status : '',
+                            'delivery_status' => $orderDetails->delivery_status ? $orderDetails->delivery_status : '',
+                            'driver_id' => $orderDetails->driver_id ? (string)$orderDetails->driver_id : 'Please wait we are assigning a driver for you',
+                            'driver_name' => '',
                             'driver_phone' => '',
                             'driver_email' => '',
                             "order_status" => $order->status ? $order->status : ''

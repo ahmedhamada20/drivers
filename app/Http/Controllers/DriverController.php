@@ -541,12 +541,12 @@ class DriverController extends Controller
             $query = $request->get('query');
             if ($query != '') {
                 $data = Driver::Where('fullname', 'LIKE', '%' . $query . '%')
-                    ->where('status', 1)
+
                     // ->orWhere('email', 'LIKE', '%' . $query . '%')
                     ->get();
             } else {
                 $data = Driver::orderBy('fullname', 'asc')
-                    ->where('status', 1)
+
                     ->get();
             }
             $total_row = $data->count();
