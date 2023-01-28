@@ -39,11 +39,11 @@
                 <!-- For defining autocomplete -->
                 @if( isset($order_status->driver_id))
                 <select id='selectDriver' style='width: 200px;'>
-                    @foreach($drivers as $row)
+                    @foreach(App\Driver::where('status',1)->get() as $row)
                     @if($order_status->driver_id) == $row['id'] )
-                    <option value="{{ $row['id']}}" selected>{{ $row['name'] }}</option>
+                    <option value="{{ $row['id']}}" selected>{{ $row['fullname'] }}</option>
                     @else
-                    <option value="{{ $row['id'] }}">{{ $row['name'] }}</option>
+                    <option value="{{ $row['id'] }}">{{ $row['fullname'] }}</option>
                     @endif
 
 
@@ -53,8 +53,8 @@
                 <!-- For defining autocomplete -->
                 <select id='selectDriver' style='width: 200px;'>
                     <option >-- Select Driver --</option>
-                    @foreach($drivers as $key => $row)
-                    <option value="{{ $row['id'] }}">{{ $row['name'] }}</option>
+                    @foreach(App\Driver::where('status',1)->get() as $key => $row)
+                    <option value="{{ $row['id'] }}">{{ $row['fullname'] }}</option>
                     @endforeach
                 </select>
                 @endif
@@ -86,7 +86,7 @@
         </div>
         <div class="card-content collapse show">
             <div class="row">
-                
+
                 <div class="col-xl-3 col-lg-6 col-12">
                     <div class="card card-width border-primary">
 
@@ -188,7 +188,7 @@
                 </div>
                 <div class="col-xl-3 col-lg-6 col-12" style="  margin-left: 20px;">
                     @if( $order_status->driver_id)
-                    
+
                         <h3 class="mb-2">Reassign Driver</h3>
                         <a class="btn btn-success" style="padding: 5px !important;" id="assign-driver"> Reassign Driver</a>
                         <h3 class="mt-3 mb-2">Driver Details</h3>
