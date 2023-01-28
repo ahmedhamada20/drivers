@@ -54,7 +54,7 @@ class DriverController extends Controller
             ]);
 
             $data = [];
-
+            $responseInformation = '';
             if ($validator->fails()) {
                 return $this->error($validator->errors()->first(), 200);
             }
@@ -196,7 +196,7 @@ class DriverController extends Controller
                 }
             }
 
-            DB::transaction(function () use ($request, $licenseFileName, $vehicleFileName, $profilenametostore, $emiratesFileName) {
+            DB::transaction(function () use ($request, $licenseFileName, $vehicleFileName, $profilenametostore, $emiratesFileName, $responseInformation) {
 
 
                 $data = new Driver;
@@ -217,6 +217,7 @@ class DriverController extends Controller
                 $data['company_id'] = $request->company;
                 $data->save();
 
+
                 $vehicles = Vehicle::create([
                     'file_path' => rtrim($vehicleFileName, ','),
                     'driver_id' => $data->id,
@@ -227,7 +228,17 @@ class DriverController extends Controller
 
 
             });
-            return $this->success('Registered Successfully',$request->firstname);
+
+            $responseInformation = array(
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'gender' => $request->gender,
+                'dob' => $request->date,
+                'address' => $request->address,
+                'profile' => public_path('storage/driver/profile/thumbnail/' . $profilenametostore),
+            );
+
+            return $this->success('Registered Successfully', $responseInformation);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
