@@ -43,7 +43,7 @@ class DriverController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Driver::latest()->where('status', 1)->get();
+            $data = Driver::get();
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {

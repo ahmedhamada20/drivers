@@ -39,7 +39,7 @@
                 <!-- For defining autocomplete -->
                 @if( isset($order_status->driver_id))
                 <select id='selectDriver' style='width: 200px;'>
-                    @foreach(App\Driver::where('status',1)->get() as $row)
+                    @foreach(App\Driver::get() as $row)
                     @if($order_status->driver_id) == $row['id'] )
                     <option value="{{ $row['id']}}" selected>{{ $row['fullname'] }}</option>
                     @else
@@ -53,7 +53,7 @@
                 <!-- For defining autocomplete -->
                 <select id='selectDriver' style='width: 200px;'>
                     <option >-- Select Driver --</option>
-                    @foreach(App\Driver::where('status',1)->get() as $key => $row)
+                    @foreach(App\Driver::get() as $key => $row)
                     <option value="{{ $row['id'] }}">{{ $row['fullname'] }}</option>
                     @endforeach
                 </select>
