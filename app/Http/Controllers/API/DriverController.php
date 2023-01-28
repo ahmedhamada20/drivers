@@ -36,7 +36,7 @@ class DriverController extends Controller
                 "lastname" => "required",
                 "date" => "required",
                 "email" => "required|unique:users,email|email|unique:drivers,email",
-                "phone" => "required",
+                "phone" => "required|unique:drivers,phone",
                 "password" => "required",
                 "gender" => "required",
                 'licenseImage' => 'required',
