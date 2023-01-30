@@ -273,7 +273,7 @@
             @endcan
 
             @can('currency')
-                <li class=" nav-item"><a href="#"><i class="ft-users"></i><span class="menu-title"
+                <li class=" nav-item"><a href="{{route('currencies')}}"><i class="ft-users"></i><span class="menu-title"
                                                                                 data-i18n="">currency</span></a>
                     {{--            <ul class="menu-content">--}}
                     {{--                <li @if( Request::is('admin/roles/index')  || (Request::is('admin/roles/view/*'))) class="active" @endif>--}}

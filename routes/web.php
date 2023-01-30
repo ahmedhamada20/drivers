@@ -161,6 +161,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
        return view('settings.index');
     })->name('setting');
 
+
+    Route::get('/currencies',function (){
+       return view('currencies.index');
+    })->name('currencies');
+
 });
 
 Route::get('privacy-policy', function () {
