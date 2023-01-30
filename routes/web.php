@@ -157,6 +157,10 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     //----- Promo code Apis route end ------- //
 
+    Route::get('/setting',function (){
+       return view('settings.index');
+    })->name('setting');
+
 });
 
 Route::get('privacy-policy', function () {

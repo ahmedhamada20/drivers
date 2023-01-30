@@ -256,7 +256,7 @@
 
             @can('Settings')
 
-                <li class=" nav-item"><a href="#"><i class="ft-users"></i><span class="menu-title"
+                <li class=" nav-item"><a href="{{route('setting')}}"><i class="ft-users"></i><span class="menu-title"
                                                                                 data-i18n="">Settings</span></a>
                     {{--            <ul class="menu-content">--}}
                     {{--                <li @if( Request::is('admin/roles/index')  || (Request::is('admin/roles/view/*'))) class="active" @endif>--}}
