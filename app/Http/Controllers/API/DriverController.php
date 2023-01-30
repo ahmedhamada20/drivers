@@ -229,25 +229,39 @@ class DriverController extends Controller
 
                 if ($data){
                     $responseInformation = array(
-                        'fullname' => $data->fullname,
-                        'firstname' => $request->firstname,
-                        'lastname' => $request->lastname,
 
-                        'status' => $data->status,
-                        'email' => $data->email,
-                        'phone' => $data->phone,
-                        'gender' => $data->gender,
-                        'dob' => $data->dob,
-                        'address' => $data->address,
-                        'emirates_id' => $data->emirates_id,
-                        'distance' => $data->distance,
-//                    'show_password' => $data->show_password,
-//                    'password' => $data->password,
-                        'licence_file' => $data->licence_file,
-//                    'unique_id' => $data->unique_id,
-//                    'company_id' => $data->company_id,
-                        'profile' => public_path('storage/driver/profile/thumbnail/' . $profilenametostore),
+                        'id' => $data->id ? $data->id : '',
+                        'firstname' => $data->fullname ? $request->firstname : '',
+                        'lastname' => $data->fullname ? $request->lastname : '',
+                        'email' => $data->email ? $data->email : '',
+                        'phone' => $data->phone ? (string)$data->phone : '',
+
+                        'status' => $data->status ? true : false,
+                        'vehicle_type' => $vehicles->type ? $vehicles->type : "",
+                        'vehicle_number' => $vehicles->vehicle_number ? $vehicles->vehicle_number : "",
+                        'driver_unique_id' => $data->unique_id ? $data->unique_id : "",
                         'token' => $data->createToken('Laravel Password Grant Client')->accessToken,
+
+
+//                        'fullname' => $data->fullname,
+//                        'firstname' => $request->firstname,
+//                        'lastname' => $request->lastname,
+//
+//                        'status' => $data->status,
+//                        'email' => $data->email,
+//                        'phone' => $data->phone,
+//                        'gender' => $data->gender,
+//                        'dob' => $data->dob,
+//                        'address' => $data->address,
+//                        'emirates_id' => $data->emirates_id,
+//                        'distance' => $data->distance,
+////                    'show_password' => $data->show_password,
+////                    'password' => $data->password,
+//                        'licence_file' => $data->licence_file,
+////                    'unique_id' => $data->unique_id,
+////                    'company_id' => $data->company_id,
+//                        'profile' => public_path('storage/driver/profile/thumbnail/' . $profilenametostore),
+//                        'token' => $data->createToken('Laravel Password Grant Client')->accessToken,
                     );
                 }
 
