@@ -196,7 +196,7 @@ class DriverController extends Controller
                 }
             }
 
-            DB::transaction(function () use ($request, $licenseFileName, $vehicleFileName, $profilenametostore, $emiratesFileName, $responseInformation) {
+//            DB::transaction(function () use ($request, $licenseFileName, $vehicleFileName, $profilenametostore, $emiratesFileName, $responseInformation) {
 
 
                 $data = new Driver;
@@ -224,20 +224,21 @@ class DriverController extends Controller
                     'model' => $request->model,
                     'type' => $request->vehicle_type,
                     'vehicle_number' => $request->vehicle_number
-                ]);
+                ]);;
 
 
-            });
+                $responseInformation = array(
+                    'email' => $request->email,
+                    'phone' => $request->phone,
+                    'gender' => $request->gender,
+                    'dob' => $request->date,
+                    'address' => $request->address,
+                    'profile' => public_path('storage/driver/profile/thumbnail/' . $profilenametostore),
+                    'token' => $data->createToken('Laravel Password Grant Client')->accessToken,
+                );
 
-            $responseInformation = array(
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'gender' => $request->gender,
-                'dob' => $request->date,
-                'address' => $request->address,
-                'profile' => public_path('storage/driver/profile/thumbnail/' . $profilenametostore),
-            );
 
+//            });
             return $this->success('Registered Successfully', $responseInformation);
         } catch (\Exception $e) {
             return response()->json([
