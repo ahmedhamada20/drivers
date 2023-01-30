@@ -37,6 +37,7 @@ class UserController extends Controller
                         'city' => $existingUser->city ?  $existingUser->city : '',
                         'address' => $existingUser->address ?  $existingUser->address : '',
                         'address_type' => $existingUser->address_type ?  $existingUser->address_type : '',
+                        'points' => $existingUser->points ?  $existingUser->points : '',
 
                     );
                     return $this->success('Retrieved Successfully', $response);
