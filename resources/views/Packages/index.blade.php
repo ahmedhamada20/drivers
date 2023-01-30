@@ -73,6 +73,9 @@
                                         <td>{{ $value->package->recipient_phone }}</td>
                                         <td>{{ $value->status }}</td>
                                         <td>
+                                            @if($value->status != 'cancel')
+                                            <button class="btn btn-primary" style="padding: 5px !important;" data-toggle="modal" data-target="#exampleModal{{$value->id}}"><i class="fa fa-edit"></i> Status </button>
+                                            @endif
                                             <a href="{{ route('package.details', ['id' => $value->package->id]) }}" class="btn btn-success" style="padding: 5px !important;"><i class="ft-eye"></i> View</a>
 
                                             <!-- @if ($value->status == 1)
@@ -81,6 +84,7 @@
                                             <a href="{{route('user.status', ['id' => $value->id])}}" class="btn btn-success" style="padding: 5px !important;"><i class="ft-check-circle"></i> Enable</a>
                                             @endif -->
                                         </td>
+                                        @include('Packages.status')
                                     </tr>
                                     @endforeach
                                     @else

@@ -37,8 +37,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Route::get('/dashboard', 'HomeController@dashboard')->name('admin.home')->middleware('is_admin');
 
 
-    Route::get('Reportdrrivers/{id}', 'ReportController@Reportdrrivers')->name('Reportdrrivers');
 
+
+    Route::get('Reportdrrivers/{id}', 'ReportController@Reportdrrivers')->name('Reportdrrivers');
 
     // get Location In Map
     Route::get('getLocations', 'ReportController@getLocations')->name('getLocations');
@@ -98,7 +99,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/package/view/{id}', 'PackageController@packageDetails')->name('package.details');
     Route::post('/get-drivers', 'PackageController@getDrivers')->name('get.drivers');
     Route::post('/assign-driver', 'PackageController@assignDriver')->name('assign.driver');
-
+    Route::post('updatedStatusOrders','PackageController@updatedStatusOrders')->name('updatedStatusOrders');
     // contact us
     Route::get('/contact/index', 'ContactsController@index')->name('contact.view');
     Route::get('live-search/contact', 'ContactsController@searchBox')->name('live_search.Contact');

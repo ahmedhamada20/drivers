@@ -311,6 +311,7 @@ class DriverController extends Controller
 
         $driver = Driver::where('phone', $request->phone)->where('status', 1)->first();
 
+
         if ($driver) {
             $firstname = '';
             $lastname = '';

@@ -216,4 +216,15 @@ class PackageController extends Controller
             return response()->json(['status' => 'error', 'message' => "Please select a driver."]);
         }
     }
+
+
+    public function updatedStatusOrders(Request $request)
+    {
+        $orders = Order::findorfail($request->id);
+        $orders->update([
+            'status' => $request->status,
+            'cancel_reason' => $request->cancel_reason
+        ]);
+        return back()->with('message', 'Done Cansel Orders');
+    }
 }
