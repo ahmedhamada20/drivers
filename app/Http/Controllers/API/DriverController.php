@@ -228,11 +228,20 @@ class DriverController extends Controller
 
 
                 $responseInformation = array(
-                    'email' => $request->email,
-                    'phone' => $request->phone,
-                    'gender' => $request->gender,
-                    'dob' => $request->date,
-                    'address' => $request->address,
+                    'fullname' => $data->fullname,
+                    'status' => $data->status,
+                    'email' => $data->email,
+                    'phone' => $data->phone,
+                    'gender' => $data->gender,
+                    'dob' => $data->dob,
+                    'address' => $data->address,
+                    'emirates_id' => $data->emirates_id,
+                    'distance' => $data->distance,
+//                    'show_password' => $data->show_password,
+//                    'password' => $data->password,
+                    'licence_file' => $data->licence_file,
+//                    'unique_id' => $data->unique_id,
+//                    'company_id' => $data->company_id,
                     'profile' => public_path('storage/driver/profile/thumbnail/' . $profilenametostore),
                     'token' => $data->createToken('Laravel Password Grant Client')->accessToken,
                 );
