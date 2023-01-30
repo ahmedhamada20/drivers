@@ -227,24 +227,31 @@ class DriverController extends Controller
                 ]);;
 
 
-                $responseInformation = array(
-                    'fullname' => $data->fullname,
-                    'status' => $data->status,
-                    'email' => $data->email,
-                    'phone' => $data->phone,
-                    'gender' => $data->gender,
-                    'dob' => $data->dob,
-                    'address' => $data->address,
-                    'emirates_id' => $data->emirates_id,
-                    'distance' => $data->distance,
+                if ($data){
+                    $responseInformation = array(
+                        'fullname' => $data->fullname,
+                        'firstname' => $request->firstname,
+                        'lastname' => $request->lastname,
+
+                        'status' => $data->status,
+                        'email' => $data->email,
+                        'phone' => $data->phone,
+                        'gender' => $data->gender,
+                        'dob' => $data->dob,
+                        'address' => $data->address,
+                        'emirates_id' => $data->emirates_id,
+                        'distance' => $data->distance,
 //                    'show_password' => $data->show_password,
 //                    'password' => $data->password,
-                    'licence_file' => $data->licence_file,
+                        'licence_file' => $data->licence_file,
 //                    'unique_id' => $data->unique_id,
 //                    'company_id' => $data->company_id,
-                    'profile' => public_path('storage/driver/profile/thumbnail/' . $profilenametostore),
-                    'token' => $data->createToken('Laravel Password Grant Client')->accessToken,
-                );
+                        'profile' => public_path('storage/driver/profile/thumbnail/' . $profilenametostore),
+                        'token' => $data->createToken('Laravel Password Grant Client')->accessToken,
+                    );
+                }
+
+
 
 
 //            });
