@@ -104,10 +104,10 @@
                                         @foreach($getOrders as $orders)
                                             <tr>
                                                 <td>{{$loop->index +1 }}</td>
-                                                <td>{{$orders->user->firstname}}</td>
-                                                <td>{{$orders->status}}</td>
-                                                <td>{{$orders->total_amount}} AED</td>
-                                                <td>{{$orders->package->parcel_description}}</td>
+                                                <td>{{$orders->user->firstname ?? null}}</td>
+                                                <td>{{$orders->status ?? null}}</td>
+                                                <td>{{$orders->total_amount ?? null}} AED</td>
+                                                <td>{{$orders->package->parcel_description ?? null}}</td>
                                                 @foreach($orders->getInformation as $drivers)
                                                     <td>{{$drivers->driver ? $drivers->driver->fullname : null}}</td>
                                                     <td>{{$drivers->driver ? $drivers->driver->phone : null}}</td>
