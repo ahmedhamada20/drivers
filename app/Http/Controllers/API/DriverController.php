@@ -35,7 +35,7 @@ class DriverController extends Controller
                 'firstname' => "required",
                 "lastname" => "required",
                 "date" => "required",
-                "email" => "required|unique:users,email|email|unique:drivers,email",
+                "email" => "required|email|unique:drivers,email",
                 "phone" => "required|unique:drivers,phone",
                 "password" => "required",
                 "gender" => "required",
@@ -51,6 +51,9 @@ class DriverController extends Controller
                 "emirates_id" => "required",
                 "address" => "required",
                 "company" => "required"
+            ],[
+                'email.unique' => 'The email is registered before',
+                'phone.unique' => 'The Phone is registered before',
             ]);
 
             $data = [];
