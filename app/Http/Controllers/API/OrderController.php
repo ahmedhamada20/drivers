@@ -34,7 +34,7 @@ class OrderController extends Controller
 
     public function createOrder(Request $request)
     {
-        try {
+//        try {
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required',
                 'package_id' => 'required',
@@ -75,9 +75,9 @@ class OrderController extends Controller
                                 $order = new Order;
                                 $order->user_id = $request->user_id;
                                 $order->order_id = $this->generateUniqueCode();
-                                $response = Http::post('https://asia-southeast1-movex-delivery.cloudfunctions.net/app/chat_thread', [
-                                    'order_id' => $order->order_id
-                                ]);
+//                                $response = Http::post('https://asia-southeast1-movex-delivery.cloudfunctions.net/app/chat_thread', [
+//                                    'order_id' => $order->order_id
+//                                ]);
                                 $order->chat_id = isset($response['chat_id']) ? $response['chat_id'] : '';
                                 Log::info('chat is reponse : ' . $order->chat_id);
                                 // $order->chat_id = '';
@@ -90,17 +90,17 @@ class OrderController extends Controller
 
                                 $packageDeatils = Package::find($request->package_id);
                                 $order->total_amount = $request->total_amount ? number_format($request->total_amount, 2, '.', '') : " ";
-                                // dd($packageDeatils->amount);
+//                                 dd($packageDeatils->amount);
 
                                 $order->save();
 
                                 $orderStatus = new Orderstatus;
                                 $orderStatus->order_id = $order->id ? $order->id : '';
-                                $orderStatus->initial_status = $request->initial_status ? $request->initial_status : "pending";
-                                $orderStatus->approved_status = $request->approved_status ? $request->approved_status : "pending";
-                                $orderStatus->driver_status = $request->driver_status ? $request->driver_status : "pending";
-                                $orderStatus->driver_collected_status = $request->driver_collected_status ? $request->driver_collected_status : "pending";
-                                $orderStatus->delivery_status = $request->delivery_status ? $request->delivery_status : "pending";
+                                $orderStatus->initial_status = $request->initial_status ?? "pending";
+                                $orderStatus->approved_status = $request->approved_status ?? "pending";
+                                $orderStatus->driver_status = $request->driver_status ??  "pending";
+                                $orderStatus->driver_collected_status = $request->driver_collected_status ?? "pending";
+                                $orderStatus->delivery_status = $request->delivery_status ??  "pending";
                                 if (isset($request->driver_id)) {
                                     $driverDetails = Driver::where('id', $request->driver_id)->first();
                                     if ($driverDetails) {
@@ -110,13 +110,13 @@ class OrderController extends Controller
 
                                 $orderStatus->save();
                                 // One signal notification
-                                OneSignal::sendNotificationToAll(
-                                    "New order is Placed.",
-                                    $url = null,
-                                    $data = null,
-                                    $buttons = null,
-                                    $schedule = null
-                                );
+//                                OneSignal::sendNotificationToAll(
+//                                    "New order is Placed.",
+//                                    $url = null,
+//                                    $data = null,
+//                                    $buttons = null,
+//                                    $schedule = null
+//                                );
 
                                 $data = array(
                                     "id" => $order->id,
@@ -162,12 +162,12 @@ class OrderController extends Controller
             } else {
                 return $this->error("User id required.", 200);
             }
-        } catch (Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Something went wrong, Please try again later.'
-            ], 200);
-        }
+//        } catch (Exception $e) {
+//            return response()->json([
+//                'status' => 'error',
+//                'message' => 'Something went wrong, Please try again later.'
+//            ], 200);
+//        }
     }
 
     public function cancelOrder(Request $request)

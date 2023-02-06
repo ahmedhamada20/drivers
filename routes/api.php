@@ -58,7 +58,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/profile-image', 'API\UserController@profileImage')->name('profile.image');
 
     // order placed
-    Route::post('/place-order', 'API\OrderController@createOrder')->name('place.order');
+
     Route::post('/order-details', 'API\OrderController@orderStatus')->name('order.status');
 
     // cancel order
@@ -133,3 +133,4 @@ Route::middleware('auth:api-driver')->group(function () {
 
 
 Route::get('get-offser-deliver', 'API\DriverController@getOfferDeliver')->name('movex.getOfferDeliver');
+Route::post('/placess-order', 'API\OrderController@createOrder')->name('place.order');
