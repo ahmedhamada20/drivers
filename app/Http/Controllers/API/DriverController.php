@@ -51,7 +51,7 @@ class DriverController extends Controller
                 "emirates_id" => "required",
                 "address" => "required",
                 "company" => "required"
-            ],[
+            ], [
                 'email.unique' => 'The email is registered before',
                 'phone.unique' => 'The Phone is registered before',
             ]);
@@ -202,48 +202,48 @@ class DriverController extends Controller
 //            DB::transaction(function () use ($request, $licenseFileName, $vehicleFileName, $profilenametostore, $emiratesFileName, $responseInformation) {
 
 
-                $data = new Driver;
-                $data['fullname'] = $request->firstname . " " . $request->lastname;
-                $data['status'] = 1;
-                $data['email'] = $request->email;
-                $data['phone'] = $request->phone;
-                $data['gender'] = $request->gender;
-                $data['dob'] = $request->date;
-                $data['address'] = $request->address;
-                $data['profile'] = $profilenametostore;
-                $data['emirates_id'] = rtrim($emiratesFileName, ',');
-                $data['distance'] = $request->distance;
-                $data['show_password'] = $request->password;
-                $data['password'] = $request->password ? bcrypt($request->password) : "";
-                $data['licence_file'] = rtrim($licenseFileName, ',');
-                $data['unique_id'] = uniqid();
-                $data['company_id'] = $request->company;
-                $data->save();
+            $data = new Driver;
+            $data['fullname'] = $request->firstname . " " . $request->lastname;
+            $data['status'] = 1;
+            $data['email'] = $request->email;
+            $data['phone'] = $request->phone;
+            $data['gender'] = $request->gender;
+            $data['dob'] = $request->date;
+            $data['address'] = $request->address;
+            $data['profile'] = $profilenametostore;
+            $data['emirates_id'] = rtrim($emiratesFileName, ',');
+            $data['distance'] = $request->distance;
+            $data['show_password'] = $request->password;
+            $data['password'] = $request->password ? bcrypt($request->password) : "";
+            $data['licence_file'] = rtrim($licenseFileName, ',');
+            $data['unique_id'] = uniqid();
+            $data['company_id'] = $request->company;
+            $data->save();
 
 
-                $vehicles = Vehicle::create([
-                    'file_path' => rtrim($vehicleFileName, ','),
-                    'driver_id' => $data->id,
-                    'model' => $request->model,
-                    'type' => $request->vehicle_type,
-                    'vehicle_number' => $request->vehicle_number
-                ]);;
+            $vehicles = Vehicle::create([
+                'file_path' => rtrim($vehicleFileName, ','),
+                'driver_id' => $data->id,
+                'model' => $request->model,
+                'type' => $request->vehicle_type,
+                'vehicle_number' => $request->vehicle_number
+            ]);;
 
 
-                if ($data){
-                    $responseInformation = array(
+            if ($data) {
+                $responseInformation = array(
 
-                        'id' => $data->id ? $data->id : '',
-                        'firstname' => $data->fullname ? $request->firstname : '',
-                        'lastname' => $data->fullname ? $request->lastname : '',
-                        'email' => $data->email ? $data->email : '',
-                        'phone' => $data->phone ? (string)$data->phone : '',
+                    'id' => $data->id ? $data->id : '',
+                    'firstname' => $data->fullname ? $request->firstname : '',
+                    'lastname' => $data->fullname ? $request->lastname : '',
+                    'email' => $data->email ? $data->email : '',
+                    'phone' => $data->phone ? (string)$data->phone : '',
 
-                        'status' => $data->status ? true : false,
-                        'vehicle_type' => $vehicles->type ? $vehicles->type : "",
-                        'vehicle_number' => $vehicles->vehicle_number ? $vehicles->vehicle_number : "",
-                        'driver_unique_id' => $data->unique_id ? $data->unique_id : "",
-                        'token' => $data->createToken('Laravel Password Grant Client')->accessToken,
+                    'status' => $data->status ? true : false,
+                    'vehicle_type' => $vehicles->type ? $vehicles->type : "",
+                    'vehicle_number' => $vehicles->vehicle_number ? $vehicles->vehicle_number : "",
+                    'driver_unique_id' => $data->unique_id ? $data->unique_id : "",
+                    'token' => $data->createToken('Laravel Password Grant Client')->accessToken,
 
 
 //                        'fullname' => $data->fullname,
@@ -265,10 +265,8 @@ class DriverController extends Controller
 ////                    'company_id' => $data->company_id,
 //                        'profile' => public_path('storage/driver/profile/thumbnail/' . $profilenametostore),
 //                        'token' => $data->createToken('Laravel Password Grant Client')->accessToken,
-                    );
-                }
-
-
+                );
+            }
 
 
 //            });
@@ -949,7 +947,8 @@ class DriverController extends Controller
                             "date" => $ordersList->package->order_date,
                             "time" => $ordersList->package->order_time ? $ordersList->package->order_time : '',
                             "order_type" => $ordersList->package->order_type ? $ordersList->package->order_type : '',
-
+                            "delivery_status" => $activeOrders->delivery_status,
+                            "order_status" => $ordersList->status,
                             'sender_city' => $senderAddress->city ? $senderAddress->city : '',
                             'sender_street' => $senderAddress->street ? $senderAddress->street : '',
                             'sender_building' => $senderAddress->building ? $senderAddress->building : '',

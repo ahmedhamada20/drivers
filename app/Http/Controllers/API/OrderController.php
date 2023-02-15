@@ -75,9 +75,9 @@ class OrderController extends Controller
                                 $order = new Order;
                                 $order->user_id = $request->user_id;
                                 $order->order_id = $this->generateUniqueCode();
-//                                $response = Http::post('https://asia-southeast1-movex-delivery.cloudfunctions.net/app/chat_thread', [
-//                                    'order_id' => $order->order_id
-//                                ]);
+                                $response = Http::post('https://asia-southeast1-movex-delivery.cloudfunctions.net/app/chat_thread', [
+                                    'order_id' => $order->order_id
+                                ]);
                                 $order->chat_id = isset($response['chat_id']) ? $response['chat_id'] : '';
                                 Log::info('chat is reponse : ' . $order->chat_id);
                                 // $order->chat_id = '';
